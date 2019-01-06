@@ -1,27 +1,51 @@
 const mongoDB = require('../config/database');
 const modelUser = require('./user');
 
-function readUsers(){
+function readUser(userID, callback){
+    mongoDB.connect(function(error, database){
+        if(error){
+            return callback( error );
+        }else{
+            readUserDatabase();
+        }
+    });
 
-}
-
-function createUsers(users, callback){
-    mongoDB.connect((err, database) => {
-        modelUser.create(users, function (err, newUsers){
-            if(err){
-                return callback(err);
+    function readUserDatabase(){
+        modelUser.findById(userID, function(error, resultData){
+            if(error){
+                return callback( { data: error, status: '404'}, null);
             }else{
-                return callback(newUsers);
+                return callback( null, resultData);
             }
         });
+    }
+}
+
+function createUser(userData, callback){
+    mongoDB.connect(function(error, database){
+        if(error){
+            return callback( error );
+        }else{
+            createUserDatabase();
+        }
     });
+
+    function createUserDatabase(){
+        modelUser.create(userData, function(error, resultData){
+            if(error){
+                return callback( { data: error, status: '403'}, null);
+            }else{
+                return callback( null, resultData);
+            }
+        });
+    }
 }
 
-function updateUsers(){
+function updateUser(){
 
 }
 
-function deleteUsers(){
+function deleteUser(){
 
 }
 
@@ -29,4 +53,4 @@ function disconnect(){
     return mongoDB.disconnect(() => {});
 }
 
-module.exports = { readUsers, createUsers, updateUsers, deleteUsers, disconnect };
+module.exports = { readUser, createUser, disconnect };
