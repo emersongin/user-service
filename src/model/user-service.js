@@ -1,16 +1,16 @@
 const mongoDB = require('../config/database');
 const modelUser = require('./user');
 
-function readUser(userID, callback){
+function getUser(userID, callback){
     mongoDB.connect(function(error, database){
         if(error){
             return callback( error );
         }else{
-            readUserDatabase();
+            getUserDatabase();
         }
     });
 
-    function readUserDatabase(){
+    function getUserDatabase(){
         modelUser.findById(userID, function(error, resultData){
             if(error){
                 return callback( { data: error, status: '404'}, null);
@@ -53,4 +53,4 @@ function disconnect(){
     return mongoDB.disconnect(() => {});
 }
 
-module.exports = { readUser, createUser, disconnect };
+module.exports = { getUser, createUser, disconnect };
