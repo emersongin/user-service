@@ -63,10 +63,8 @@ class UserController{
         let userID = request.params._id || '';
         let username = request.body.username || '';
         let password = request.body.password || '';
-    
-        const userData = userModel({username, password});
-    
-        userService.updateUser(userID, userData, function(error, resultData){
+        
+        userService.updateUser(userID, {username, password}, function(error, resultData){
             if(error){
                 responseError(error.status);
             }else{

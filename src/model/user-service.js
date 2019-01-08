@@ -53,7 +53,7 @@ class UserService{
         });
 
         function updateUserDatabase(){
-            modelUser.updateOne(userID, userData, function(error, resultData){
+            modelUser.findByIdAndUpdate(userID, userData, function(error, resultData){
                 if(error){
                     return callback({ data: error, status: '404'}, null);
                 }else{
@@ -73,7 +73,7 @@ class UserService{
         });
 
         function deleteUserDatabase(){
-            modelUser.deleteOne(userID, function(error, resultData){
+            modelUser.findByIdAndDelete(userID, function(error, resultData){
                 if(error){
                     return callback({ data: error, status: '404'}, null);
                 }else{
