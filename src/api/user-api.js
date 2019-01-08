@@ -16,6 +16,8 @@ module.exports = function(expressServer){
     function userServices(){
         userAPI.get('/v0/users/:_id', userController.getUser);
         userAPI.post('/v0/users', userController.createUser);
+        userAPI.put('/v0/users/:_id', userController.updateUser);
+        userAPI.delete('/v0/users/:_id', userController.deleteUser);
     }
     
     loadRoutes();

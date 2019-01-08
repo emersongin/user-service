@@ -11,19 +11,19 @@ function connect(callback){
     };
 
     if(databaseConnection){
-        return callback( null, databaseConnection.db);
+        return callback(null, databaseConnection.db);
     }
 
     mongooseModule.connect(`mongodb://${databaseHostname}:${databasePort}/${databaseName}`, connectOptions, function(error){
         if(error){
             consoleMessage('ERROR_CONNECT_DATABASE');
 
-            return callback( { data: error, status: '500'}, null);
+            return callback({data: error, status: '500'}, null);
         }else{
             databaseConnection = mongooseModule.connection;
             consoleMessage('CONNECTED_DATABASE');
 
-            return callback( null, databaseConnection.db);
+            return callback(null, databaseConnection.db);
         }
     });
 }
@@ -58,4 +58,4 @@ function consoleMessage(description){
     console.log(message);
 }
 
-module.exports = { connect, disconnect };
+module.exports = {connect, disconnect};
