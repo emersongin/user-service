@@ -1,5 +1,6 @@
 const userModel = require('../model/user');
 const userService = require('../model/user-service');
+const statusCode = require('./status-code');
 
 class UserController{
 
@@ -10,17 +11,17 @@ class UserController{
             if(error){
                 responseError(error.status);
             }else{
-                response.status(200)
+                response.status(statusCode.success.ok)
                     .json(resultData);
             }
     
             function responseError(errorStatus){
                 switch(errorStatus){
-                    case '500':
-                        response.status(500)
+                    case 500:
+                        response.status(statusCode.serverError.internalServerError)
                             .json(error.data);
-                    case '404':
-                        response.status(404)
+                    case 404:
+                        response.status(statusCode.clientError.notFound)
                             .json(error.data);
                 }
             }
@@ -40,17 +41,17 @@ class UserController{
                 responseError(error.status);
             }else{
                 response.header('Location', '/users/' + resultData.id)
-                    .status(201)
+                    .status(statusCode.success.created)
                     .json(resultData);
             }
     
             function responseError(errorStatus){
                 switch(errorStatus){
-                    case '500':
-                        response.status(500)
+                    case 500:
+                        response.status(statusCode.serverError.internalServerError)
                             .json(error.data);
-                    case '403':
-                        response.status(403)
+                    case 403:
+                        response.status(statusCode.clientError.forbidden)
                             .json(error.data);
                 }
             }
@@ -68,17 +69,17 @@ class UserController{
             if(error){
                 responseError(error.status);
             }else{
-                response.status(200)
+                response.status(statusCode.success.ok)
                     .json(resultData);
             }
     
             function responseError(errorStatus){
                 switch(errorStatus){
-                    case '500':
-                        response.status(500)
+                    case 500:
+                        response.status(statusCode.serverError.internalServerError)
                             .json(error.data);
-                    case '404':
-                        response.status(404)
+                    case 404:
+                        response.status(statusCode.clientError.notFound)
                             .json(error.data);
                 }
             }
@@ -94,17 +95,17 @@ class UserController{
             if(error){
                 responseError(error.status);
             }else{
-                response.status(200)
+                response.status(statusCode.success.ok)
                     .json(resultData);
             }
     
             function responseError(errorStatus){
                 switch(errorStatus){
-                    case '500':
-                        response.status(500)
+                    case 500:
+                        response.status(statusCode.serverError.internalServerError)
                             .json(error.data);
-                    case '404':
-                        response.status(404)
+                    case 404:
+                        response.status(statusCode.clientError.notFound)
                             .json(error.data);
                 }
             }
@@ -114,7 +115,7 @@ class UserController{
     }
 
     optionsUser(request, response, next){
-        response.status(200)
+        response.status(statusCode.success.ok)
         .json({
             get: {
                 params: {

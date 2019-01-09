@@ -2,6 +2,7 @@ const mongooseModule = require('mongoose');
 const databaseHostname = 'localhost';
 const databasePort = '27017';
 const databaseName = 'users';
+const statusCode = require('../controller/status-code');
 
 let databaseConnection = null;
 
@@ -18,7 +19,7 @@ function connect(callback){
         if(error){
             consoleMessage('ERROR_CONNECT_DATABASE');
 
-            return callback({data: error, status: '500'}, null);
+            return callback({data: error, status: statusCode.serverError.internalServerError}, null);
         }else{
             databaseConnection = mongooseModule.connection;
             consoleMessage('CONNECTED_DATABASE');

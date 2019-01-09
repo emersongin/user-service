@@ -1,5 +1,6 @@
 const mongoDB = require('../config/database');
 const modelUser = require('./user');
+const statusCode = require('../controller/status-code');
 
 class UserService{
 
@@ -15,7 +16,7 @@ class UserService{
         function getUserDatabase(){
             modelUser.findById(userID, function(error, resultData){
                 if(error){
-                    return callback({ data: error, status: '404'}, null);
+                    return callback({ data: error, status: statusCode.clientError.notFound}, null);
                 }else{
                     return callback(null, resultData);
                 }
@@ -35,7 +36,7 @@ class UserService{
         function createUserDatabase(){
             modelUser.create(userData, function(error, resultData){
                 if(error){
-                    return callback({data: error, status: '403'}, null);
+                    return callback({data: error, status: statusCode.clientError.forbidden}, null);
                 }else{
                     return callback(null, resultData);
                 }
@@ -55,7 +56,7 @@ class UserService{
         function updateUserDatabase(){
             modelUser.findByIdAndUpdate(userID, userData, function(error, resultData){
                 if(error){
-                    return callback({ data: error, status: '404'}, null);
+                    return callback({ data: error, status: statusCode.clientError.notFound}, null);
                 }else{
                     return callback(null, resultData);
                 }
@@ -75,7 +76,7 @@ class UserService{
         function deleteUserDatabase(){
             modelUser.findByIdAndDelete(userID, function(error, resultData){
                 if(error){
-                    return callback({ data: error, status: '404'}, null);
+                    return callback({ data: error, status: statusCode.clientError.notFound}, null);
                 }else{
                     return callback(null, resultData);
                 }
