@@ -112,6 +112,43 @@ class UserController{
             userService.disconnect();
         });
     }
+
+    optionsUser(request, response, next){
+        response.status(200)
+        .json({
+            get: {
+                params: {
+                    _id: '_id, user database'
+                }
+            },
+            post: {
+                username: {
+                    type: 'String',
+                },
+                password: {
+                    type: 'String',
+                }
+            },
+            put: {
+                params: {
+                    _id: '_id, user database'
+                },
+                body: {
+                    username: {
+                        type: 'String',
+                    },
+                    password: {
+                        type: 'String',
+                    }
+                }
+            },
+            delete: {
+                params: {
+                    _id: '_id, user databese'
+                }
+            } 
+        });
+    }
 }
 
 
