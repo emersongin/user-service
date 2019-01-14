@@ -17,6 +17,8 @@ class UserService{
             modelUser.findById(userID, function(error, resultData){
                 if(error){
                     return callback({ data: error, status: statusCode.clientError.notFound}, null);
+                }else if(!resultData){
+                    return callback({ data: `Not Found!`, status: statusCode.clientError.notFound}, null);
                 }else{
                     return callback(null, resultData);
                 }
@@ -57,6 +59,8 @@ class UserService{
             modelUser.findByIdAndUpdate(userID, userData, function(error, resultData){
                 if(error){
                     return callback({ data: error, status: statusCode.clientError.notFound}, null);
+                }else if(!resultData){
+                    return callback({ data: `Not Found!`, status: statusCode.clientError.notFound}, null);
                 }else{
                     return callback(null, resultData);
                 }
@@ -76,7 +80,9 @@ class UserService{
         function deleteUserDatabase(){
             modelUser.findByIdAndDelete(userID, function(error, resultData){
                 if(error){
-                    return callback({ data: error, status: statusCode.clientError.notFound}, null);
+                    return callback({ data: `${error}, not Found`, status: statusCode.clientError.notFound}, null);
+                }else if(!resultData){
+                    return callback({ data: `Not Found!`, status: statusCode.clientError.notFound}, null);
                 }else{
                     return callback(null, resultData);
                 }

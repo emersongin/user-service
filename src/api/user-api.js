@@ -14,11 +14,17 @@ module.exports = function(expressServer){
     }
 
     function userServices(){
-        userAPI.get('/v0/users/:_id', userController.getUser);
-        userAPI.post('/v0/users', userController.createUser);
-        userAPI.put('/v0/users/:_id', userController.updateUser);
-        userAPI.delete('/v0/users/:_id', userController.deleteUser);
-        userAPI.options('/v0/users', userController.optionsUser);
+        userAPI.route('/v0/users')
+            .post(userController.createUser)
+            .options(userController.optionsUser)
+            .all(userController.methodNotAllowed);
+
+        userAPI.route('/v0/users/:_id')
+            .get(userController.getUser)
+            .put(userController.updateUser)
+            .delete(userController.deleteUser)
+            .options(userController.optionsUser)
+            .all(userController.methodNotAllowed);
     }
     
     loadRoutes();
