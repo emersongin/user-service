@@ -18,7 +18,14 @@ class UserService{
                 if(error){
                     return callback({ data: error, status: statusCode.clientError.notFound}, null);
                 }else if(!resultData){
-                    return callback({ data: `Not Found!`, status: statusCode.clientError.notFound}, null);
+                    return callback({ 
+                        data: {
+                            name: "Not Found",
+                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
+                            message: "check request param: id."
+                        }, 
+                        status: statusCode.clientError.notFound
+                    }, null);
                 }else{
                     return callback(null, resultData);
                 }
@@ -60,7 +67,14 @@ class UserService{
                 if(error){
                     return callback({ data: error, status: statusCode.clientError.notFound}, null);
                 }else if(!resultData){
-                    return callback({ data: `Not Found!`, status: statusCode.clientError.notFound}, null);
+                    return callback({ 
+                        data: {
+                            name: "Not Found",
+                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
+                            message: "check request param: id."
+                        }, 
+                        status: statusCode.clientError.notFound
+                    }, null);
                 }else{
                     return callback(null, resultData);
                 }
@@ -80,9 +94,16 @@ class UserService{
         function deleteUserDatabase(){
             modelUser.findByIdAndDelete(userID, function(error, resultData){
                 if(error){
-                    return callback({ data: `${error}, not Found`, status: statusCode.clientError.notFound}, null);
+                    return callback({data: error, status: statusCode.clientError.notFound}, null);
                 }else if(!resultData){
-                    return callback({ data: `Not Found!`, status: statusCode.clientError.notFound}, null);
+                    return callback({
+                        data: {
+                            name: "Not Found",
+                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
+                            message: "check request param: id."
+                        }, 
+                        status: statusCode.clientError.notFound
+                    }, null);
                 }else{
                     return callback(null, resultData);
                 }

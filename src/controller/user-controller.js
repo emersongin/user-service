@@ -35,11 +35,18 @@ class UserController{
         let password = request.body.password || '';
 
         const userData = userModel({username, password});
-        
+
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
-            responseError({data: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.", status: statusCode.clientError.unsupportedMediaType});
+            responseError({
+                data: {
+                    name: "MIME type unsupported",
+                    description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
+                    message: "Use Content-type: application/json or application/x-www-form-urlencoded."
+                },
+                status: statusCode.clientError.unsupportedMediaType
+            });
         }
-    
+
         userService.createUser(userData, function(error, resultData){
             if(error){
                 responseError(error);
@@ -73,7 +80,14 @@ class UserController{
         let password = request.body.password || '';
 
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
-            responseError({data: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.", status: statusCode.clientError.unsupportedMediaType});
+            responseError({
+                data: {
+                    name: "MIME type unsupported",
+                    description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
+                    message: "Use Content-type: application/json or application/x-www-form-urlencoded."
+                },
+                status: statusCode.clientError.unsupportedMediaType
+            });
         }
         
         userService.updateUser(userID, {username, password}, function(error, resultData){
@@ -169,7 +183,11 @@ class UserController{
 
     methodNotAllowed(request, response, next){
         response.status(statusCode.clientError.methodNotAllowed)
-                .json({error: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`});
+                .json({
+                    name: "Method not allowed",
+                    description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
+                    message: "user the OPTIONS verb for method options."
+                });
     }
 
 }
