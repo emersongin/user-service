@@ -2,7 +2,7 @@ const mongooseModule = require('mongoose');
 const databaseHostname = 'localhost';
 const databasePort = '27017';
 const databaseName = 'users';
-const statusCode = require('../controller/status-code');
+const responseHTTP = require('../controller/response-http');
 
 let databaseConnection = null;
 
@@ -18,8 +18,12 @@ function connect(callback){
     mongooseModule.connect(`mongodb://${databaseHostname}:${databasePort}/${databaseName}`, connectOptions, function(error){
         if(error){
             consoleMessage('ERROR_CONNECT_DATABASE');
+            
+            return callback({
+                data: error,
+                status: responseHTTP.statusCodes.serverError.internalServerError
+            }, null);
 
-            return callback({data: error, status: statusCode.serverError.internalServerError}, null);
         }else{
             databaseConnection = mongooseModule.connection;
             consoleMessage('CONNECTED_DATABASE');
@@ -54,6 +58,7 @@ function consoleMessage(description){
             break;
         case 'DISCONNECTED_DATABASE':
             message = `DATABASE: ${databaseName}, is disconnected!`;
+            break;
     };
 
     console.log(message);
