@@ -25,9 +25,9 @@ class UserService{
                 }else if(!data){
                     return callback({
                         body: {
-                            name: "Not Found",
+                            name: "Not found",
                             description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
-                            message: "check request param: id."
+                            message: "Check the request parameter; :id."
                         }, 
                         status: responseHand.statusCodes.clientError.notFound
                     }, null);
@@ -48,10 +48,30 @@ class UserService{
             if(error){
                 return callback(error, null);
             }else{
-                createUserDatabase();
+                checkUsername();
             }
         });
     
+        function checkUsername(){
+            modelUser.findOne({username: userData.username}, 'username', function(error, data){
+                if(error){
+                    return typeErrorResponse(error);
+
+                }else if(data){
+                    return callback({
+                        body: {
+                            name: "Duplicate resource",
+                            description: "The request could not be completed due to a conflict with the current state of the target resource.",
+                            message: "Username is exist."
+                        }, 
+                        status: responseHand.statusCodes.clientError.conflict
+                    }, null);
+                }else{
+                    createUserDatabase();
+                }
+            });
+        }
+
         function createUserDatabase(){
             modelUser.create(userData, function(error, data){
                 if(error){
@@ -105,9 +125,9 @@ class UserService{
                 }else if(!data){
                     return callback({
                         body: {
-                            name: "Not Found",
+                            name: "Not found",
                             description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
-                            message: "check request param: id."
+                            message: "Check the request parameter; :id."
                         }, 
                         status: responseHand.statusCodes.clientError.notFound
                     }, null);
@@ -143,11 +163,11 @@ class UserService{
                 }else if(!data){
                     return callback({
                         body: {
-                            name: "Not Found",
-                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
-                            message: "check request param: id."
+                            name: "Resource is gone",
+                            description: "The target resource is no longer available at the origin server and that this condition is likely to be permanent.",
+                            message: "Check the request parameter; :id."
                         }, 
-                        status: responseHand.statusCodes.clientError.notFound
+                        status: responseHand.statusCodes.clientError.gone
                     }, null);
 
                 }else{

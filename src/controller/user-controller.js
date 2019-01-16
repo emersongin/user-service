@@ -133,7 +133,7 @@ class UserController{
             body: {
                 name: "Method not allowed",
                 description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
-                message: "user the OPTIONS verb for method options."
+                message: "Use the OPTIONS verb for methods options."
             },
             status: responseHand.statusCodes.clientError.methodNotAllowed
         });
