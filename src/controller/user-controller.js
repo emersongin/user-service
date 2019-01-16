@@ -25,25 +25,12 @@ class UserController{
         const userData = userModel({username, password});
 
         if(!request.accepts(['application/json'])){
-            return responseHand.failed(request, response, next, {
-                body: {
-                    name: "Not acceptable",
-                    description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
-                    message: "Use Accept: application/json."
-                },
-                status: responseHand.statusCodes.clientError.notAcceptable
-            });
+            return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
         }
 
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
-            return responseHand.failed(request, response, next, {
-                body: {
-                    name: "MIME type unsupported",
-                    description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
-                    message: "Use Content-type: application/json or application/x-www-form-urlencoded."
-                },
-                status: responseHand.statusCodes.clientError.unsupportedMediaType
-            });
+            return responseHand.unsupportedMediaType(request, response, next, 
+                "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
 
         userService.createUser(userData, function(error, data){
@@ -63,25 +50,12 @@ class UserController{
         let password = request.body.password || '';
 
         if(!request.accepts(['application/json'])){
-            return responseHand.failed(request, response, next, {
-                body: {
-                    name: "Not acceptable",
-                    description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
-                    message: "Use Accept: application/json."
-                },
-                status: responseHand.statusCodes.clientError.notAcceptable
-            });
+            return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
         }
         
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
-            return responseHand.failed({
-                body: {
-                    name: "MIME type unsupported",
-                    description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
-                    message: "Use Content-type: application/json or application/x-www-form-urlencoded."
-                },
-                status: responseHand.statusCodes.clientError.unsupportedMediaType
-            });
+            return responseHand.unsupportedMediaType(request, response, next, 
+                "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
         
         userService.updateUser(userID, {username, password}, function(error, data){
@@ -151,14 +125,7 @@ class UserController{
     }
 
     methodNotAllowed(request, response, next){
-        responseHand.failed(request, response, next, {
-            body: {
-                name: "Method not allowed",
-                description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
-                message: "Use the OPTIONS verb for methods options."
-            },
-            status: responseHand.statusCodes.clientError.methodNotAllowed
-        });
+        responseHand.methodNotAllowed(request, response, next, "Use the OPTIONS verb for methods options.");
     }
 
 }

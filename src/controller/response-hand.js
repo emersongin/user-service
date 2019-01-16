@@ -91,6 +91,39 @@ class ResponseHand{
                 .set(error.header)
                 .json(error.body);
     }
+
+    notAcceptable(request, response, next, message){
+        this.failed(request, response, next, {
+            body: {
+                name: "Not acceptable",
+                description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
+                message: message
+            },
+            status: responseHand.statusCodes.clientError.notAcceptable
+        });
+    }
+
+    unsupportedMediaType(request, response, next, message){
+        this.failed(request, response, next, {
+            body: {
+                name: "MIME type unsupported",
+                description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
+                message: message
+            },
+            status: responseHand.statusCodes.clientError.unsupportedMediaType
+        });
+    }
+
+    methodNotAllowed(request, response, next, message){
+        this.failed(request, response, next, {
+            body: {
+                name: "Method not allowed",
+                description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
+                message: message
+            },
+            status: responseHand.statusCodes.clientError.methodNotAllowed
+        });
+    }
 }
 
 module.exports = new ResponseHand();
