@@ -24,6 +24,17 @@ class UserController{
         
         const userData = userModel({username, password});
 
+        if(!request.accepts(['application/json'])){
+            return responseHand.failed(request, response, next, {
+                body: {
+                    name: "Not acceptable",
+                    description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
+                    message: "Use Accept: application/json."
+                },
+                status: responseHand.statusCodes.clientError.notAcceptable
+            });
+        }
+
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
             return responseHand.failed(request, response, next, {
                 body: {
@@ -51,6 +62,17 @@ class UserController{
         let username = request.body.username || '';
         let password = request.body.password || '';
 
+        if(!request.accepts(['application/json'])){
+            return responseHand.failed(request, response, next, {
+                body: {
+                    name: "Not acceptable",
+                    description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
+                    message: "Use Accept: application/json."
+                },
+                status: responseHand.statusCodes.clientError.notAcceptable
+            });
+        }
+        
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
             return responseHand.failed({
                 body: {

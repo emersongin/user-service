@@ -62,7 +62,8 @@ class UserService{
                         body: {
                             name: "Duplicate resource",
                             description: "The request could not be completed due to a conflict with the current state of the target resource.",
-                            message: "Username is exist."
+                            message: "Username is exist.",
+                            username: data.username
                         }, 
                         status: responseHand.statusCodes.clientError.conflict
                     }, null);
