@@ -1,6 +1,6 @@
 const userModel = require('../model/user');
 const userService = require('../model/user-service');
-const responseHTTP = require('./response-http');
+const responseHand = require('./response-hand');
 
 class UserController{
 
@@ -9,9 +9,9 @@ class UserController{
 
         userService.getUser(userID, function(error, data){
             if(error){
-                responseHTTP.responseError(request, response, next, error);
+                responseHand.failed(request, response, next, error);
             }else{
-                responseHTTP.responseSuccess(request, response, next, data);
+                responseHand.success(request, response, next, data);
             }
 
             userService.disconnect();
@@ -25,22 +25,21 @@ class UserController{
         const userData = userModel({username, password});
 
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
-            return responseHTTP.responseError(request, response, next, {
-                data: {
+            return responseHand.failed(request, response, next, {
+                body: {
                     name: "MIME type unsupported",
                     description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
                     message: "Use Content-type: application/json or application/x-www-form-urlencoded."
                 },
-                status: responseHTTP.statusCodes.clientError.unsupportedMediaType
+                status: responseHand.statusCodes.clientError.unsupportedMediaType
             });
         }
 
         userService.createUser(userData, function(error, data){
             if(error){
-                responseHTTP.responseError(request, response, next, error);
+                responseHand.failed(request, response, next, error);
             }else{
-                //.header('Location', '/users/' + resultData.id)
-                responseHTTP.responseSuccess(request, response, next, data);
+                responseHand.success(request, response, next, data);
             }
 
             userService.disconnect();
@@ -53,21 +52,21 @@ class UserController{
         let password = request.body.password || '';
 
         if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
-            return responseHTTP.responseError({
-                data: {
+            return responseHand.failed({
+                body: {
                     name: "MIME type unsupported",
                     description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
                     message: "Use Content-type: application/json or application/x-www-form-urlencoded."
                 },
-                status: responseHTTP.statusCodes.clientError.unsupportedMediaType
+                status: responseHand.statusCodes.clientError.unsupportedMediaType
             });
         }
         
         userService.updateUser(userID, {username, password}, function(error, data){
             if(error){
-                responseHTTP.responseError(request, response, next, error);
+                responseHand.failed(request, response, next, error);
             }else{
-                responseHTTP.responseSuccess(request, response, next, data);
+                responseHand.success(request, response, next, data);
             }
         
             userService.disconnect();
@@ -79,9 +78,9 @@ class UserController{
     
         userService.deleteUser(userID, function(error, data){
             if(error){
-                responseHTTP.responseError(request, response, next, error);
+                responseHand.failed(request, response, next, error);
             }else{
-                responseHTTP.responseSuccess(request, response, next, data);
+                responseHand.success(request, response, next, data);
             }
         
             userService.disconnect();
@@ -89,8 +88,8 @@ class UserController{
     }
 
     optionsUser(request, response, next){
-        responseHTTP.responseSuccess(request, response, next, {
-            data: {
+        responseHand.success(request, response, next, {
+            body: {
                 get: {
                     params: {
                         _id: '_id, user database'
@@ -125,18 +124,18 @@ class UserController{
                     }
                 } 
             },
-            status: responseHTTP.statusCodes.success.ok
+            status: responseHand.statusCodes.success.ok
         })
     }
 
     methodNotAllowed(request, response, next){
-        responseHTTP.responseError(request, response, next, {
-            data: {
+        responseHand.failed(request, response, next, {
+            body: {
                 name: "Method not allowed",
                 description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
                 message: "user the OPTIONS verb for method options."
             },
-            status: responseHTTP.statusCodes.clientError.methodNotAllowed
+            status: responseHand.statusCodes.clientError.methodNotAllowed
         });
     }
 

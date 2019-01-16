@@ -1,8 +1,9 @@
 const mongooseModule = require('mongoose');
+const responseHand = require('../controller/response-hand');
+
 const databaseHostname = 'localhost';
 const databasePort = '27017';
 const databaseName = 'users';
-const responseHTTP = require('../controller/response-http');
 
 let databaseConnection = null;
 
@@ -20,8 +21,9 @@ function connect(callback){
             consoleMessage('ERROR_CONNECT_DATABASE');
             
             return callback({
-                data: error,
-                status: responseHTTP.statusCodes.serverError.internalServerError
+                header: {},
+                body: error,
+                status: responseHand.statusCodes.serverError.internalServerError
             }, null);
 
         }else{

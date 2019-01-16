@@ -1,6 +1,6 @@
 const mongoDB = require('../config/database');
 const modelUser = require('./user');
-const responseHTTP = require('../controller/response-http');
+const responseHand = require('../controller/response-hand');
 
 class UserService{
 
@@ -15,27 +15,27 @@ class UserService{
         });
     
         function getUserDatabase(){
-            modelUser.findById(userID, function(error, result){
+            modelUser.findById(userID, function(error, data){
                 if(error){
                     return callback({
-                        data: error,
-                        status: responseHTTP.statusCodes.clientError.badRequest
+                        body: error,
+                        status: responseHand.statusCodes.clientError.badRequest
                     }, null);
 
-                }else if(!result){
-                    return callback({ 
-                        data: {
+                }else if(!data){
+                    return callback({
+                        body: {
                             name: "Not Found",
                             description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
                             message: "check request param: id."
                         }, 
-                        status: responseHTTP.statusCodes.clientError.notFound
+                        status: responseHand.statusCodes.clientError.notFound
                     }, null);
 
                 }else{
                     return callback(null, {
-                        data: result,
-                        status: responseHTTP.statusCodes.success.ok
+                        body: data,
+                        status: responseHand.statusCodes.success.ok
                     });
 
                 }
@@ -53,13 +53,16 @@ class UserService{
         });
     
         function createUserDatabase(){
-            modelUser.create(userData, function(error, result){
+            modelUser.create(userData, function(error, data){
                 if(error){
                     return typeErrorResponse(error);
                 }else{
                     return callback(null, {
-                        data: result,
-                        status: responseHTTP.statusCodes.success.created
+                        header: {
+                            'Location': `/users/${data.id}`
+                        },
+                        body: data,
+                        status: responseHand.statusCodes.success.created
                     });
                 }
             });
@@ -69,14 +72,14 @@ class UserService{
             switch(error.name){
                 case 'ValidationError':
                     callback({
-                        data: error,
-                        status: responseHTTP.statusCodes.clientError.forbidden
+                        body: error,
+                        status: responseHand.statusCodes.clientError.forbidden
                     }, null);
                     break;
                 default :
                     callback({
-                        data: error,
-                        status: responseHTTP.statusCodes.clientError.badRequest
+                        body: error,
+                        status: responseHand.statusCodes.clientError.badRequest
                     }, null);
             }
         }
@@ -92,27 +95,27 @@ class UserService{
         });
 
         function updateUserDatabase(){
-            modelUser.findByIdAndUpdate(userID, userData, function(error, result){
+            modelUser.findByIdAndUpdate(userID, userData, function(error, data){
                 if(error){
                     return callback({
-                        data: error, 
-                        status: responseHTTP.statusCodes.clientError.badRequest
+                        body: error, 
+                        status: responseHand.statusCodes.clientError.badRequest
                     }, null);
 
-                }else if(!result){
+                }else if(!data){
                     return callback({
-                        data: {
+                        body: {
                             name: "Not Found",
                             description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
                             message: "check request param: id."
                         }, 
-                        status: responseHTTP.statusCodes.clientError.notFound
+                        status: responseHand.statusCodes.clientError.notFound
                     }, null);
 
                 }else{
                     return callback(null, {
-                        data: result,
-                        status: responseHTTP.statusCodes.success.ok
+                        body: data,
+                        status: responseHand.statusCodes.success.ok
                     });
 
                 }
@@ -130,27 +133,27 @@ class UserService{
         });
 
         function deleteUserDatabase(){
-            modelUser.findByIdAndDelete(userID, function(error, result){
+            modelUser.findByIdAndDelete(userID, function(error, data){
                 if(error){
                     return callback({
-                        data: error, 
-                        status: responseHTTP.statusCodes.clientError.badRequest
+                        body: error, 
+                        status: responseHand.statusCodes.clientError.badRequest
                     }, null);
 
-                }else if(!result){
+                }else if(!data){
                     return callback({
-                        data: {
+                        body: {
                             name: "Not Found",
                             description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
                             message: "check request param: id."
                         }, 
-                        status: responseHTTP.statusCodes.clientError.notFound
+                        status: responseHand.statusCodes.clientError.notFound
                     }, null);
 
                 }else{
                     return callback(null, {
-                        data: result,
-                        status: responseHTTP.statusCodes.success.noContent
+                        body: data,
+                        status: responseHand.statusCodes.success.noContent
                     });
 
                 }

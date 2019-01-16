@@ -1,4 +1,4 @@
-class ResponseHTTP{
+class ResponseHand{
     constructor(){
         this.statusCodes = {
             informational: {
@@ -80,50 +80,17 @@ class ResponseHTTP{
 
     }
 
-    responseSuccess(request, response, next, result){
-        switch(result.status){
-            case 204:
-                response.status(this.statusCodes.success.noContent)
-                    .json(result.data);
-                break;
-            case 201:
-                response.status(this.statusCodes.success.created)
-                    .json(result.data);
-                break;
-            case 200:
-                response.status(this.statusCodes.success.ok)
-                    .json(result.data);
-        }
+    success(request, response, next, data){
+        response.status(data.status)
+                .set(data.header)
+                .json(data.body);
     }
 
-    responseError(request, response, next, error){
-        switch(error.status){
-            case 500:
-                response.status(this.statusCodes.serverError.internalServerError)
-                        .json(error.data);
-                break;
-            case 415:
-                response.status(this.statusCodes.clientError.unsupportedMediaType)
-                        .json(error.data)
-                break;
-            case 405:
-                response.status(this.statusCodes.clientError.methodNotAllowed)
-                        .json(error.data)
-                break;
-            case 404:
-                response.status(this.statusCodes.clientError.notFound)
-                        .json(error.data);
-                break;
-            case 403:
-                response.status(this.statusCodes.clientError.forbidden)
-                        .json(error.data);
-                break;
-            case 400:
-                response.status(this.statusCodes.clientError.badRequest)
-                        .json(error.data);
-                break;
-        }
+    failed(request, response, next, error){
+        response.status(error.status)
+                .set(error.header)
+                .json(error.body);
     }
 }
 
-module.exports = new ResponseHTTP();
+module.exports = new ResponseHand();
