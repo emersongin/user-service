@@ -7,6 +7,8 @@ class UserController{
     getUser(request, response, next){
         let userID = request.params._id || '';
 
+        console.log(request.fresh)
+
         userService.getUser(userID, function(error, data){
             if(error){
                 responseHand.failed(request, response, next, error);
