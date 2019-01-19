@@ -99,7 +99,7 @@ class ResponseHand{
                 description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
                 message: message
             },
-            status: responseHand.statusCodes.clientError.notAcceptable
+            status: this.statusCodes.clientError.notAcceptable
         });
     }
 
@@ -110,7 +110,7 @@ class ResponseHand{
                 description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
                 message: message
             },
-            status: responseHand.statusCodes.clientError.unsupportedMediaType
+            status: this.statusCodes.clientError.unsupportedMediaType
         });
     }
 
@@ -121,7 +121,18 @@ class ResponseHand{
                 description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
                 message: message
             },
-            status: responseHand.statusCodes.clientError.methodNotAllowed
+            status: this.statusCodes.clientError.methodNotAllowed
+        });
+    }
+
+    notModified(request, response, next, message){
+        this.failed(request, response, next, {
+            body: {
+                name: "Not Modified",
+                description: "The conditional is valid.",
+                message: message
+            },
+            status: this.statusCodes.redirection.notModified
         });
     }
 }

@@ -7,16 +7,19 @@ class UserController{
     getUser(request, response, next){
         let userID = request.params._id || '';
 
-        console.log(request.fresh)
+        if(request.fresh){
+            return responseHand.notModified(request, response, next, "Fresh resource.");
+        }
 
         userService.getUser(userID, function(error, data){
-            if(error){
-                responseHand.failed(request, response, next, error);
-            }else{
+            try{
                 responseHand.success(request, response, next, data);
-            }
+            }catch{
+                responseHand.failed(request, response, next, error);
 
-            userService.disconnect();
+            }finally{
+                userService.disconnect();
+            }
         });
     }
     
@@ -36,13 +39,14 @@ class UserController{
         }
 
         userService.createUser(userData, function(error, data){
-            if(error){
-                responseHand.failed(request, response, next, error);
-            }else{
+            try{
                 responseHand.success(request, response, next, data);
-            }
+            }catch{
+                responseHand.failed(request, response, next, error);
 
-            userService.disconnect();
+            }finally{
+                userService.disconnect();
+            }
         });
     }
 
@@ -61,13 +65,14 @@ class UserController{
         }
         
         userService.updateUser(userID, {username, password}, function(error, data){
-            if(error){
-                responseHand.failed(request, response, next, error);
-            }else{
+            try{
                 responseHand.success(request, response, next, data);
+            }catch{
+                responseHand.failed(request, response, next, error);
+
+            }finally{
+                userService.disconnect();
             }
-        
-            userService.disconnect();
         });
     }
 
@@ -75,13 +80,14 @@ class UserController{
         let userID = request.params._id || '';
     
         userService.deleteUser(userID, function(error, data){
-            if(error){
-                responseHand.failed(request, response, next, error);
-            }else{
+            try{
                 responseHand.success(request, response, next, data);
+            }catch{
+                responseHand.failed(request, response, next, error);
+                
+            }finally{
+                userService.disconnect();
             }
-        
-            userService.disconnect();
         });
     }
 
