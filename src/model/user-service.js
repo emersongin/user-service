@@ -4,6 +4,45 @@ const responseHand = require('../controller/response-hand');
 
 class UserService{
 
+    getUsers(callback){
+        mongoDB.connect(function(error, database){
+            if(error){
+                return callback(error, null);
+            }else{
+                getUsersDatabase();
+            }
+
+        });
+    
+        function getUsersDatabase(){
+            modelUser.find(function(error, data){
+                if(error){
+                    return callback({
+                        body: error,
+                        status: responseHand.statusCodes.clientError.badRequest
+                    }, null);
+
+                }else if(!data){
+                    return callback({
+                        body: {
+                            name: "Not found",
+                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
+                            message: "Check the request parameter; :id."
+                        }, 
+                        status: responseHand.statusCodes.clientError.notFound
+                    }, null);
+
+                }else{
+                    return callback(null, {
+                        body: data,
+                        status: responseHand.statusCodes.success.ok
+                    });
+
+                }
+            });
+        }
+    }
+
     getUser(userID, callback){
         mongoDB.connect(function(error, database){
             if(error){
@@ -117,7 +156,7 @@ class UserService{
 
         function replaceUserDatabase(){
             modelUser.findByIdAndUpdate(userID, userData, {
-                new: true, 
+                new: true,
                 runValidators: true
             }, function(error, data){
                 if(error){

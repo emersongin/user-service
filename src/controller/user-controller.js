@@ -4,6 +4,23 @@ const responseHand = require('./response-hand');
 
 class UserController{
 
+    getUsers(request, response, next){
+        if(request.fresh){
+            return responseHand.notModified(request, response, next, "Fresh resource.");
+        }
+
+        userService.getUsers(function(error, data){
+            try{
+                responseHand.success(request, response, next, data);
+            }catch{
+                responseHand.failed(request, response, next, error);
+
+            }finally{
+                userService.disconnect();
+            }
+        });
+    }
+
     getUser(request, response, next){
         let userID = request.params._id || '';
 
