@@ -4,7 +4,7 @@ const responseHand = require('../controller/response-hand');
 
 class UserService{
 
-    getUsers(callback){
+    getUsers(filter, callback){
         mongoDB.connect(function(error, database){
             if(error){
                 return callback(error, null);
@@ -15,53 +15,14 @@ class UserService{
         });
     
         function getUsersDatabase(){
-            modelUser.find(function(error, data){
+            modelUser.find(filter, function(error, data){
                 if(error){
                     return callback({
                         body: error,
                         status: responseHand.statusCodes.clientError.badRequest
                     }, null);
 
-                }else if(!data){
-                    return callback({
-                        body: {
-                            name: "Not found",
-                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
-                            message: "Check the request parameter; :id."
-                        }, 
-                        status: responseHand.statusCodes.clientError.notFound
-                    }, null);
-
-                }else{
-                    return callback(null, {
-                        body: data,
-                        status: responseHand.statusCodes.success.ok
-                    });
-
-                }
-            });
-        }
-    }
-
-    getUser(userID, callback){
-        mongoDB.connect(function(error, database){
-            if(error){
-                return callback(error, null);
-            }else{
-                getUserDatabase();
-            }
-
-        });
-    
-        function getUserDatabase(){
-            modelUser.findById(userID, function(error, data){
-                if(error){
-                    return callback({
-                        body: error,
-                        status: responseHand.statusCodes.clientError.badRequest
-                    }, null);
-
-                }else if(!data){
+                }else if(!data || data.length <= 0){
                     return callback({
                         body: {
                             name: "Not found",
@@ -82,7 +43,7 @@ class UserService{
         }
     }
     
-    createUser(userData, callback){
+    createUser(usersData, callback){
         mongoDB.connect(function(error, database){
             if(error){
                 return callback(error, null);
@@ -92,7 +53,7 @@ class UserService{
         });
     
         function checkUsername(){
-            modelUser.findOne({username: userData.username}, 'username', function(error, data){
+            modelUser.findOne(usersData.username, 'username', function(error, data){
                 if(error){
                     return typeErrorResponse(error);
 

@@ -21,7 +21,7 @@ module.exports = function(expressServer){
             .all(userController.methodNotAllowed);
 
         userAPI.route('/v0/users/:_id')
-            .get(userController.getUser)
+            .get(userController.getUserById)
             .put(userController.replaceUser)
             .patch(userController.updateUser)
             .delete(userController.deleteUser)

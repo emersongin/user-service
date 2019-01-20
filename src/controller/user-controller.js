@@ -4,12 +4,16 @@ const responseHand = require('./response-hand');
 
 class UserController{
 
-    getUsers(request, response, next){
+    getUserById(request, response, next){
+        let filterUserID = {
+            _id: request.params._id || ''
+        }
+
         if(request.fresh){
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
-        userService.getUsers(function(error, data){
+        userService.getUsers(filterUserID, function(error, data){
             try{
                 responseHand.success(request, response, next, data);
             }catch{
@@ -21,14 +25,14 @@ class UserController{
         });
     }
 
-    getUser(request, response, next){
-        let userID = request.params._id || '';
+    getUsers(request, response, next){
+        let filter = request.body || {};
 
         if(request.fresh){
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
-        userService.getUser(userID, function(error, data){
+        userService.getUsers(filter, function(error, data){
             try{
                 responseHand.success(request, response, next, data);
             }catch{
@@ -41,10 +45,7 @@ class UserController{
     }
     
     createUser(request, response, next){
-        let username = request.body.username || '';
-        let password = request.body.password || '';
-        
-        const userData = userModel({username, password});
+        const usersData = request.body;
 
         if(!request.accepts(['application/json'])){
             return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
@@ -55,7 +56,7 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
 
-        userService.createUser(userData, function(error, data){
+        userService.createUser(usersData, function(error, data){
             try{
                 responseHand.success(request, response, next, data);
             }catch{
