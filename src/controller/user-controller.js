@@ -50,7 +50,7 @@ class UserController{
         });
     }
 
-    updateUser(request, response, next){
+    replaceUser(request, response, next){
         let userID = request.params._id || '';
         let username = request.body.username || '';
         let password = request.body.password || '';
@@ -64,7 +64,32 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
         
-        userService.updateUser(userID, {username, password}, function(error, data){
+        userService.replaceUser(userID, {username, password}, function(error, data){
+            try{
+                responseHand.success(request, response, next, data);
+            }catch{
+                responseHand.failed(request, response, next, error);
+
+            }finally{
+                userService.disconnect();
+            }
+        });
+    }
+
+    updateUser(request, response, next){
+        let userID = request.params._id || '';
+        let userData = request.body;
+
+        if(!request.accepts(['application/json'])){
+            return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
+        }
+        
+        if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
+            return responseHand.unsupportedMediaType(request, response, next, 
+                "Use Content-type: application/json or application/x-www-form-urlencoded.");
+        }
+        
+        userService.updateUser(userID, userData, function(error, data){
             try{
                 responseHand.success(request, response, next, data);
             }catch{
