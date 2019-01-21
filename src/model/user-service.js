@@ -43,17 +43,30 @@ class UserService{
         }
     }
     
-    createUser(usersData, callback){
+    createUsers(usersData, callback){
         mongoDB.connect(function(error, database){
             if(error){
                 return callback(error, null);
+                
             }else{
-                checkUsername();
+                checkUsernames();
             }
         });
     
-        function checkUsername(){
-            modelUser.findOne(usersData.username, 'username', function(error, data){
+        function checkUsernames(){
+            let usernames;
+
+            function mapArrayOneProp(ArrayElement, ArrayIndex, Array){
+                return ArrayElement['username'];
+            }
+
+            if(Array.isArray(usersData)){
+                usernames = usersData.map(mapArrayOneProp);
+            }else{
+                usernames = usersData.username;
+            }
+            
+            modelUser.findOne({username: { $in: usernames }}, 'username', function(error, data){
                 if(error){
                     return typeErrorResponse(error);
 
@@ -67,24 +80,28 @@ class UserService{
                         }, 
                         status: responseHand.statusCodes.clientError.conflict
                     }, null);
+
                 }else{
-                    createUserDatabase();
+                    createUsersDatabase();
+
                 }
             });
         }
 
-        function createUserDatabase(){
-            modelUser.create(userData, function(error, data){
+        function createUsersDatabase(){
+            modelUser.create(usersData, function(error, data){
                 if(error){
                     return typeErrorResponse(error);
+
                 }else{
                     return callback(null, {
                         header: {
-                            'Location': `/users/${data.id}`
+                            'Location': `/users/:id`
                         },
                         body: data,
                         status: responseHand.statusCodes.success.created
                     });
+
                 }
             });
         }

@@ -44,7 +44,7 @@ class UserController{
         });
     }
     
-    createUser(request, response, next){
+    createUsers(request, response, next){
         const usersData = request.body;
 
         if(!request.accepts(['application/json'])){
@@ -56,7 +56,7 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
 
-        userService.createUser(usersData, function(error, data){
+        userService.createUsers(usersData, function(error, data){
             try{
                 responseHand.success(request, response, next, data);
             }catch{

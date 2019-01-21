@@ -16,7 +16,7 @@ module.exports = function(expressServer){
     function userServices(){
         userAPI.route('/v0/users')
             .get(userController.getUsers)
-            .post(userController.createUser)
+            .post(userController.createUsers)
             .options(userController.optionsUser)
             .all(userController.methodNotAllowed);
 
