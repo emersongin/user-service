@@ -81,15 +81,17 @@ class ResponseHand{
     }
 
     success(request, response, next, data){
-        response.status(data.status)
-                .set(data.header)
-                .json(data.body);
+        response.status(data.status);
+        response.set(data.header);
+        response.links(data.link || {});
+        response.json(data.body);
     }
 
     failed(request, response, next, error){
-        response.status(error.status)
-                .set(error.header)
-                .json(error.body);
+        response.status(error.status);
+        response.set(error.header);
+        response.links(error.link || {});
+        response.json(error.body);
     }
 
     notAcceptable(request, response, next, message){

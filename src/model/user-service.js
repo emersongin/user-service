@@ -34,8 +34,13 @@ class UserService{
 
                 }else{
                     return callback(null, {
+                        status: responseHand.statusCodes.success.ok,
                         body: data,
-                        status: responseHand.statusCodes.success.ok
+                        link: {
+                            delete: 'http://localhost:3000/api/v0/users/' + data[0]._id,
+                            put: 'http://localhost:3000/api/v0/users/' + data[0]._id,
+                            patch: 'http://localhost:3000/api/v0/users/' + data[0]._id
+                        }
                     });
 
                 }
