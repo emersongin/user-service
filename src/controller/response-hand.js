@@ -81,17 +81,15 @@ class ResponseHand{
     }
 
     success(request, response, next, data){
-        response.status(data.status);
-        response.set(data.header);
-        response.links(data.link || {});
-        response.json(data.body);
+        response.status(data.status)
+                .set(data.header)
+                .json(data.body);
     }
 
     failed(request, response, next, error){
-        response.status(error.status);
-        response.set(error.header);
-        response.links(error.link || {});
-        response.json(error.body);
+        response.status(error.status)
+                .set(error.header)
+                .json(error.body);
     }
 
     notAcceptable(request, response, next, message){
@@ -136,6 +134,26 @@ class ResponseHand{
             },
             status: this.statusCodes.redirection.notModified
         });
+    }
+
+    createLinksGet(object, index, array){
+        let links = [];
+        
+        links.push({
+            type: "DELETE",
+            rel: "remove",
+            href: "http://localhost:3000/api/v0/users/" + object._id
+        }, {
+            type: "PUT",
+            rel: "replace",
+            href: "http://localhost:3000/api/v0/users/" + object._id
+        }, {
+            type: "PATCH",
+            rel: "update",
+            href: "http://localhost:3000/api/v0/users/" + object._id
+        });
+
+        return Object.assign({}, object._doc, {links});
     }
 }
 

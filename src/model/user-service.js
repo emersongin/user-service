@@ -35,12 +35,7 @@ class UserService{
                 }else{
                     return callback(null, {
                         status: responseHand.statusCodes.success.ok,
-                        body: data,
-                        link: {
-                            delete: 'http://localhost:3000/api/v0/users/' + data[0]._id,
-                            put: 'http://localhost:3000/api/v0/users/' + data[0]._id,
-                            patch: 'http://localhost:3000/api/v0/users/' + data[0]._id
-                        }
+                        body: data.map(responseHand.createLinksGet)
                     });
 
                 }
@@ -61,12 +56,12 @@ class UserService{
         function checkUsernames(){
             let usernames;
 
-            function mapArrayOneProp(ArrayElement, ArrayIndex, Array){
-                return ArrayElement['username'];
+            function mapUsernames(object, index, array){
+                return object['username'];
             }
 
             if(Array.isArray(usersData)){
-                usernames = usersData.map(mapArrayOneProp);
+                usernames = usersData.map(mapUsernames);
             }else{
                 usernames = usersData.username;
             }
