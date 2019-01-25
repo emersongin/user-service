@@ -6,37 +6,37 @@ class UserService{
 
     getUsers(filter, callback){
         mongoDB.connect().then(dataBase => {
-            getUsersDatabase();
-        }).catch(error => {
-            callback(error);
-        })
+                getUsersDatabase();
+
+            }).catch(error => {
+                return callback(error);
+
+            });
     
         function getUsersDatabase(){
-            modelUser.find(filter, function(error, data){
-                if(error){
+            modelUser.find(filter)
+                .then(data => {
+                    if(data.empty()){
+                        return callback({
+                            body: {
+                                name: "Not found",
+                                description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
+                                message: "Check the request parameter; :id."
+                            }, 
+                            status: responseHand.statusCodes.clientError.notFound
+                        });
+                    }else{
+                        return callback({
+                            status: responseHand.statusCodes.success.ok,
+                            body: data.map(responseHand.createLinksGet)
+                        });
+                    }
+                }).catch(error => {
                     return callback({
                         body: error,
                         status: responseHand.statusCodes.clientError.badRequest
-                    }, null);
-
-                }else if(!data || data.length <= 0){
-                    return callback({
-                        body: {
-                            name: "Not found",
-                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
-                            message: "Check the request parameter; :id."
-                        }, 
-                        status: responseHand.statusCodes.clientError.notFound
-                    }, null);
-
-                }else{
-                    return callback(null, {
-                        status: responseHand.statusCodes.success.ok,
-                        body: data.map(responseHand.createLinksGet)
                     });
-
-                }
-            });
+                });
         }
     }
     

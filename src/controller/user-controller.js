@@ -13,16 +13,18 @@ class UserController{
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
-        userService.getUsers(filterUserID, function(error, data){
+        userService.getUsers(filterUserID, function(data){
+            console.log(data)
             try{
                 responseHand.success(request, response, next, data);
+
             }catch{
-                responseHand.failed(request, response, next, error);
+                responseHand.failed(request, response, next, data);
 
             }finally{
                 userService.disconnect();
-            }
 
+            }
         });
     }
 

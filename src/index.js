@@ -1,3 +1,5 @@
+require('./config/core');
+
 const Server = require('./config/server');
 const userAPI = require('./api/user-api');
 

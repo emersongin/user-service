@@ -33,7 +33,7 @@ class DataBaseConnect{
                         status: responseHand.statusCodes.serverError.internalServerError
                     });
 
-                    console.log(`Connection error in DATABASE: ${databaseName} on port: ${databasePort}`);
+                    console.log(`Connection error in DATABASE: ${this.databaseName} on port: ${this.databasePort}`);
                 });
         });
     }
