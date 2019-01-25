@@ -22,6 +22,7 @@ class UserController{
             }finally{
                 userService.disconnect();
             }
+
         });
     }
 

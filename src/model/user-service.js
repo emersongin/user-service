@@ -5,14 +5,11 @@ const responseHand = require('../controller/response-hand');
 class UserService{
 
     getUsers(filter, callback){
-        mongoDB.connect(function(error, database){
-            if(error){
-                return callback(error, null);
-            }else{
-                getUsersDatabase();
-            }
-
-        });
+        mongoDB.connect().then(dataBase => {
+            getUsersDatabase();
+        }).catch(error => {
+            callback(error);
+        })
     
         function getUsersDatabase(){
             modelUser.find(filter, function(error, data){

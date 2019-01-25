@@ -1,69 +1,60 @@
 const mongooseModule = require('mongoose');
 const responseHand = require('../controller/response-hand');
 
-const databaseHostname = 'localhost';
-const databasePort = '27017';
-const databaseName = 'users';
-
-let databaseConnection = null;
-
-function connect(callback){
-    let connectOptions = {
-        useNewUrlParser: true
-    };
-
-    if(databaseConnection){
-        return callback(null, databaseConnection.db);
+class DataBaseConnect{
+    constructor(){
+        this.databaseHostname = 'localhost';
+        this.databasePort = '27017';
+        this.databaseName = 'users';
+        this.databaseConnection = null;
     }
 
-    mongooseModule.connect(`mongodb://${databaseHostname}:${databasePort}/${databaseName}`, connectOptions, function(error){
-        if(error){
-            consoleMessage('ERROR_CONNECT_DATABASE');
-            
-            return callback({
-                header: {},
-                body: error,
-                status: responseHand.statusCodes.serverError.internalServerError
-            }, null);
+    connect(){
+        let connection = `mongodb://${this.databaseHostname}:${this.databasePort}/${this.databaseName}`;
 
-        }else{
-            databaseConnection = mongooseModule.connection;
-            consoleMessage('CONNECTED_DATABASE');
+        let connectOptions = {
+            useNewUrlParser: true
+        };
 
-            return callback(null, databaseConnection.db);
-        }
-    });
-}
+        return new Promise((resolve, reject) => {
+            if(this.databaseConnection){
+                resolve(this.databaseConnection.db);
+            }
 
-function disconnect(callback){
-    if(!databaseConnection){
-        return callback(true);
+            mongooseModule.connect(connection, connectOptions).then(connectionMongoDB => {
+                this.databaseConnection = connectionMongoDB;
+                resolve(this.databaseConnection.db);
+
+                console.log(`DATABASE: ${this.databaseName}, connected on port: ${this.databasePort}`);
+            }).catch( error => {                   
+                reject({
+                    body: error,
+                    status: responseHand.statusCodes.serverError.internalServerError
+                });
+
+                console.log(`Connection error in DATABASE: ${databaseName} on port: ${databasePort}`);
+            });
+        })
     }
 
-    databaseConnection.close(true, function(){
-        databaseConnection = null;
-        consoleMessage('DISCONNECTED_DATABASE');
+    disconnect(){
+        return new Promise((resolve, reject) => {
+            if(!this.databaseConnection){
+                resolve(true);
+            }
 
-        return callback(true);
-    });
+            mongooseModule.connection.close().then(result => {
+                this.databaseConnection = null;
+                resolve(true);
+
+                console.log(`DATABASE: ${this.databaseName}, is disconnected!`);
+            }).catch(error => {
+                reject(error);
+
+            });
+        });
+    }
+
 }
 
-function consoleMessage(description){
-    let message = null;
-
-    switch(description){
-        case 'CONNECTED_DATABASE': 
-            message = `DATABASE: ${databaseName}, connected on port: ${databasePort}`;
-            break;
-        case 'ERROR_CONNECT_DATABASE':
-            message = `Connection error in DATABASE: ${databaseName} on port: ${databasePort}`;
-            break;
-        case 'DISCONNECTED_DATABASE':
-            message = `DATABASE: ${databaseName}, is disconnected!`;
-            break;
-    };
-
-    console.log(message);
-}
-
-module.exports = {connect, disconnect};
+module.exports = new DataBaseConnect();
