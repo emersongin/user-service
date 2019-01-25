@@ -21,20 +21,21 @@ class DataBaseConnect{
                 resolve(this.databaseConnection.db);
             }
 
-            mongooseModule.connect(connection, connectOptions).then(connectionMongoDB => {
-                this.databaseConnection = connectionMongoDB;
-                resolve(this.databaseConnection.db);
+            mongooseModule.connect(connection, connectOptions)
+                .then(connectionMongoDB => {
+                    this.databaseConnection = connectionMongoDB;
+                    resolve(this.databaseConnection.db);
 
-                console.log(`DATABASE: ${this.databaseName}, connected on port: ${this.databasePort}`);
-            }).catch( error => {                   
-                reject({
-                    body: error,
-                    status: responseHand.statusCodes.serverError.internalServerError
+                    console.log(`DATABASE: ${this.databaseName}, connected on port: ${this.databasePort}`);
+                }).catch(error => {
+                    reject({
+                        body: error,
+                        status: responseHand.statusCodes.serverError.internalServerError
+                    });
+
+                    console.log(`Connection error in DATABASE: ${databaseName} on port: ${databasePort}`);
                 });
-
-                console.log(`Connection error in DATABASE: ${databaseName} on port: ${databasePort}`);
-            });
-        })
+        });
     }
 
     disconnect(){
@@ -43,15 +44,16 @@ class DataBaseConnect{
                 resolve(true);
             }
 
-            mongooseModule.connection.close().then(result => {
-                this.databaseConnection = null;
-                resolve(true);
+            mongooseModule.connection.close()
+                .then(disconnectionMongoDB => {
+                    this.databaseConnection = null;
+                    resolve(true);
 
-                console.log(`DATABASE: ${this.databaseName}, is disconnected!`);
-            }).catch(error => {
-                reject(error);
+                    console.log(`DATABASE: ${this.databaseName}, is disconnected!`);
+                }).catch(error => {
+                    reject(error);
 
-            });
+                });
         });
     }
 
