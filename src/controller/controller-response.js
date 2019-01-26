@@ -2,7 +2,7 @@ const mongoDB = require('../config/database');
 const modelUser = require('../model/user');
 const responseHand = require('./response-hand');
 
-class UserService{
+class ControllerResponse{
 
     getUsers(filter, callback){
         function getUsersDatabase(){
@@ -275,4 +275,4 @@ class UserService{
 }
 
 
-module.exports = new UserService();
+module.exports = new ControllerResponse();

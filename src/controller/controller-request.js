@@ -1,14 +1,15 @@
 const controllerResponse = require('./controller-response');
+const requestHand = require('./request-hand');
 const responseHand = require('./response-hand');
 
-class UserController{
+class ControllerRequest{
 
     getUserById(request, response, next){
         let filterUserID = {
             _id: request.params._id || ''
         }
 
-        if(request.fresh){
+        if(requestHand.cache(request)){
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
@@ -22,7 +23,7 @@ class UserController{
     getUsers(request, response, next){
         let filter = request.body || {};
 
-        if(request.fresh){
+        if(requestHand.cache(request)){
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
@@ -34,15 +35,19 @@ class UserController{
     }
     
     createUsers(request, response, next){
-        const usersData = request.body;
+        let usersData = request.body;
+        let headers = requestHand.headers;
 
-        if(!request.accepts(['application/json'])){
-            return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
+        if(requestHand.acceptHeaders(request, headers.contentType.json)){
+            return responseHand.notAcceptable(request, response, next, "Use Accept: " + headers.contentType.json + ".");
         }
 
-        if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
-            return responseHand.unsupportedMediaType(request, response, next, 
-                "Use Content-type: application/json or application/x-www-form-urlencoded.");
+        if(requestHand.contentTypeHeaders([
+            headers.contentType.json, 
+            headers.contentType.urlencoded
+        ])){
+            return responseHand.unsupportedMediaType(request, response, next,
+                "Use Content-type: " + headers.contentType.json + "or" + headers.contentType.urlencoded + ".");
         }
 
         controllerResponse.createUsers(usersData, async function(data){
@@ -56,14 +61,18 @@ class UserController{
         let userID = request.params._id || '';
         let username = request.body.username || '';
         let password = request.body.password || '';
+        let headers = requestHand.headers;
 
-        if(!request.accepts(['application/json'])){
-            return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
+        if(requestHand.acceptHeaders(request, headers.contentType.json)){
+            return responseHand.notAcceptable(request, response, next, "Use Accept: " + headers.contentType.json + ".");
         }
         
-        if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
+        if(requestHand.contentTypeHeaders([
+            headers.contentType.json, 
+            headers.contentType.urlencoded
+        ])){
             return responseHand.unsupportedMediaType(request, response, next, 
-                "Use Content-type: application/json or application/x-www-form-urlencoded.");
+                "Use Content-type: " + headers.contentType.json + "or" + headers.contentType.urlencoded + ".");
         }
         
         controllerResponse.replaceUser(userID, {username, password}, async function(data){
@@ -76,14 +85,18 @@ class UserController{
     updateUser(request, response, next){
         let userID = request.params._id || '';
         let userData = request.body;
+        let headers = requestHand.headers;
 
-        if(!request.accepts(['application/json'])){
+        if(requestHand.acceptHeaders(request, headers.contentType.json)){
             return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
         }
         
-        if(!request.is(['application/json', 'application/x-www-form-urlencoded'])){
+        if(requestHand.contentTypeHeaders([
+            headers.contentType.json, 
+            headers.contentType.urlencoded
+        ])){
             return responseHand.unsupportedMediaType(request, response, next, 
-                "Use Content-type: application/json or application/x-www-form-urlencoded.");
+                "Use Content-type: " + headers.contentType.json + "or" + headers.contentType.urlencoded + ".");
         }
         
         controllerResponse.updateUser(userID, userData, async function(data){
@@ -150,4 +163,4 @@ class UserController{
 
 }
 
-module.exports = new UserController();
+module.exports = new ControllerRequest();
