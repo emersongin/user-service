@@ -1,5 +1,4 @@
-const userModel = require('../model/user');
-const userService = require('../model/user-service');
+const controllerResponse = require('./controller-response');
 const responseHand = require('./response-hand');
 
 class UserController{
@@ -13,18 +12,10 @@ class UserController{
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
-        userService.getUsers(filterUserID, function(data){
-            console.log(data)
-            try{
-                responseHand.success(request, response, next, data);
+        controllerResponse.getUsers(filterUserID, async function(data){
+            await responseHand.end(request, response, next, data);
 
-            }catch{
-                responseHand.failed(request, response, next, data);
-
-            }finally{
-                userService.disconnect();
-
-            }
+            controllerResponse.disconnect();
         });
     }
 
@@ -35,15 +26,10 @@ class UserController{
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
-        userService.getUsers(filter, function(error, data){
-            try{
-                responseHand.success(request, response, next, data);
-            }catch{
-                responseHand.failed(request, response, next, error);
-
-            }finally{
-                userService.disconnect();
-            }
+        controllerResponse.getUsers(filter, async function(error, data){
+            await responseHand.end(request, response, next, data);
+            
+            controllerResponse.disconnect();
         });
     }
     
@@ -59,15 +45,10 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
 
-        userService.createUsers(usersData, function(error, data){
-            try{
-                responseHand.success(request, response, next, data);
-            }catch{
-                responseHand.failed(request, response, next, error);
-
-            }finally{
-                userService.disconnect();
-            }
+        controllerResponse.createUsers(usersData, async function(error, data){
+            await responseHand.end(request, response, next, data);
+            
+            controllerResponse.disconnect();
         });
     }
 
@@ -85,15 +66,10 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
         
-        userService.replaceUser(userID, {username, password}, function(error, data){
-            try{
-                responseHand.success(request, response, next, data);
-            }catch{
-                responseHand.failed(request, response, next, error);
-
-            }finally{
-                userService.disconnect();
-            }
+        controllerResponse.replaceUser(userID, {username, password}, async function(error, data){
+            await responseHand.end(request, response, next, data);
+            
+            controllerResponse.disconnect();
         });
     }
 
@@ -110,30 +86,20 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
         
-        userService.updateUser(userID, userData, function(error, data){
-            try{
-                responseHand.success(request, response, next, data);
-            }catch{
-                responseHand.failed(request, response, next, error);
-
-            }finally{
-                userService.disconnect();
-            }
+        controllerResponse.updateUser(userID, userData, async function(error, data){
+            await responseHand.end(request, response, next, data);
+            
+            controllerResponse.disconnect();
         });
     }
 
     deleteUser(request, response, next){
         let userID = request.params._id || '';
     
-        userService.deleteUser(userID, function(error, data){
-            try{
-                responseHand.success(request, response, next, data);
-            }catch{
-                responseHand.failed(request, response, next, error);
-                
-            }finally{
-                userService.disconnect();
-            }
+        controllerResponse.deleteUser(userID, async function(error, data){
+            await responseHand.end(request, response, next, data);
+            
+            controllerResponse.disconnect();
         });
     }
 

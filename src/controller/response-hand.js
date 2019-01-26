@@ -80,20 +80,14 @@ class ResponseHand{
 
     }
 
-    success(request, response, next, data){
+    end(request, response, next, data){
         response.status(data.status)
                 .set(data.header)
                 .json(data.body);
     }
 
-    failed(request, response, next, error){
-        response.status(error.status)
-                .set(error.header)
-                .json(error.body);
-    }
-
     notAcceptable(request, response, next, message){
-        this.failed(request, response, next, {
+        this.end(request, response, next, {
             body: {
                 name: "Not acceptable",
                 description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
@@ -104,7 +98,7 @@ class ResponseHand{
     }
 
     unsupportedMediaType(request, response, next, message){
-        this.failed(request, response, next, {
+        this.end(request, response, next, {
             body: {
                 name: "MIME type unsupported",
                 description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
@@ -115,7 +109,7 @@ class ResponseHand{
     }
 
     methodNotAllowed(request, response, next, message){
-        this.failed(request, response, next, {
+        this.end(request, response, next, {
             body: {
                 name: "Method not allowed",
                 description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
@@ -126,7 +120,7 @@ class ResponseHand{
     }
 
     notModified(request, response, next, message){
-        this.failed(request, response, next, {
+        this.end(request, response, next, {
             body: {
                 name: "Not Modified",
                 description: "The conditional is valid.",

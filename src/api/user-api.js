@@ -2,7 +2,7 @@ const expressModule = require('express');
 
 module.exports = function(expressServer){
     const userAPI = expressModule.Router();
-    const userController = require('../controller/user-controller');
+    const controllerRequest = require('../controller/controller-request');
 
     function loadRoutes(){
         userRoutes();
@@ -15,18 +15,18 @@ module.exports = function(expressServer){
 
     function userServices(){
         userAPI.route('/v0/users')
-            .get(userController.getUsers)
-            .post(userController.createUsers)
-            .options(userController.optionsUser)
-            .all(userController.methodNotAllowed);
+            .get(controllerRequest.getUsers)
+            .post(controllerRequest.createUsers)
+            .options(controllerRequest.optionsUser)
+            .all(controllerRequest.methodNotAllowed);
 
         userAPI.route('/v0/users/:_id')
-            .get(userController.getUserById)
-            .put(userController.replaceUser)
-            .patch(userController.updateUser)
-            .delete(userController.deleteUser)
-            .options(userController.optionsUser)
-            .all(userController.methodNotAllowed);
+            .get(controllerRequest.getUserById)
+            .put(controllerRequest.replaceUser)
+            .patch(controllerRequest.updateUser)
+            .delete(controllerRequest.deleteUser)
+            .options(controllerRequest.optionsUser)
+            .all(controllerRequest.methodNotAllowed);
     }
     
     loadRoutes();
