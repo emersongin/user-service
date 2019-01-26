@@ -16,7 +16,7 @@ class RequestHand{
         this.contentTypes = options.contentTypes;
     }
 
-    cache(request){
+    cacheHeaders(request){
         return request.fresh;
     }
 

@@ -6,14 +6,11 @@ class ControllerResponse{
 
     getUsers(filter, callback){
         function getUsersDatabase(){
-            return new Promise((resolve, reject) => {
-                findUsers(resolve, reject);
-            });
 
             function findUsers(resolve, reject){
                 modelUser.find(filter).then(data => {
                     if(data.empty()){
-                        resolve({
+                        reject({
                             body: {
                                 name: "Not found",
                                 description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
@@ -37,6 +34,10 @@ class ControllerResponse{
                 });
             };
 
+            return new Promise((resolve, reject) => {
+                findUsers(resolve, reject);
+            });
+
         }
 
         return Promise.all([this.connect(), getUsersDatabase()]).then(promises => {
@@ -45,87 +46,96 @@ class ControllerResponse{
         }).catch(error => {
             callback(error);
             
-        })
+        });
     }
     
     createUsers(usersData, callback){
-        mongoDB.connect(function(error, database){
-            if(error){
-                return callback(error, null);
-                
-            }else{
-                checkUsernames();
-            }
-        });
-    
+   
         function checkUsernames(){
             let usernames;
-
-            function mapUsernames(object, index, array){
-                return object['username'];
-            }
 
             if(Array.isArray(usersData)){
                 usernames = usersData.map(mapUsernames);
             }else{
                 usernames = usersData.username;
             }
-            
-            modelUser.findOne({username: { $in: usernames }}, 'username', function(error, data){
-                if(error){
-                    return typeErrorResponse(error);
 
-                }else if(data){
-                    return callback({
-                        body: {
-                            name: "Duplicate resource",
-                            description: "The request could not be completed due to a conflict with the current state of the target resource.",
-                            message: "Username is exist.",
-                            username: data.username
-                        }, 
-                        status: responseHand.statusCodes.clientError.conflict
-                    }, null);
+            function mapUsernames(object, index, array){
+                return object['username'];
+            }
 
-                }else{
-                    createUsersDatabase();
+            function findUsernames(resolve, reject){
+                modelUser.findOne({username: { $in: usernames }}, 'username').then(data => {
+                    if(data){
+                        reject(typeErrorResponse({name: 'UsernameExist'}));
+                    }else{
+                        resolve(data);
+                    }
+                }).catch(error => {
+                    reject(typeErrorResponse(error));
+                });
+            }
 
-                }
+            return new Promise((resolve, reject) => {
+                findUsernames(resolve, reject);
             });
         }
 
         function createUsersDatabase(){
-            modelUser.create(usersData, function(error, data){
-                if(error){
-                    return typeErrorResponse(error);
-
-                }else{
-                    return callback(null, {
+            
+            function createUsers(resolve, reject){
+                modelUser.create(usersData).then(data => {
+                    console.log('criou!');
+                    resolve({
                         header: {
                             'Location': `/users/:id`
                         },
                         body: data,
                         status: responseHand.statusCodes.success.created
-                    });
+                    })
+                }).catch(error => {
+                    reject(typeErrorResponse(error));
+                });
+            }
 
-                }
+            return new Promise((resolve, reject) => {
+                createUsers(resolve, reject);
             });
         }
 
         function typeErrorResponse(error){
             switch(error.name){
+                case 'UsernameExist':
+                    return {
+                        body: {
+                            name: "Duplicate resource",
+                            description: "The request could not be completed due to a conflict with the current state of the target resource.",
+                            message: "Username is exist."
+                        }, 
+                        status: responseHand.statusCodes.clientError.conflict
+                    };
+                break;
                 case 'ValidationError':
-                    callback({
+                    return {
                         body: error,
                         status: responseHand.statusCodes.clientError.forbidden
-                    }, null);
-                    break;
+                    };
+                break;
                 default :
-                    callback({
+                    return {
                         body: error,
                         status: responseHand.statusCodes.clientError.badRequest
-                    }, null);
+                    };
             }
         }
+
+        return Promise.all([this.connect(), checkUsernames(), createUsersDatabase()]).then(promises => {
+            callback(promises[promises.lastIndex()]);
+
+        }).catch(error => {
+            callback(error);
+            
+        });
     }
     
     replaceUser(userID, userData, callback){

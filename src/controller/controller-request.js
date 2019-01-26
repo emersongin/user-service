@@ -19,7 +19,7 @@ class ControllerRequest{
             _id: request.params._id || ''
         }
 
-        if(requestHand.cache(request)){
+        if(requestHand.cacheHeaders(request)){
             return responseHand.notModified(response, "Fresh resource.");
         }
 
@@ -33,7 +33,7 @@ class ControllerRequest{
     getUsers(request, response, next){
         let filter = request.body || {};
 
-        if(requestHand.cache(request)){
+        if(requestHand.cacheHeaders(request)){
             return responseHand.notModified(response, "Fresh resource.");
         }
 
