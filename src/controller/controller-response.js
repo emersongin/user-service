@@ -5,19 +5,15 @@ const responseHand = require('./response-hand');
 class UserService{
 
     getUsers(filter, callback){
-        mongoDB.connect().then(dataBase => {
-                getUsersDatabase();
-
-            }).catch(error => {
-                return callback(error);
-
-            });
-    
         function getUsersDatabase(){
-            modelUser.find(filter)
-                .then(data => {
+            return new Promise((resolve, reject) => {
+                findUsers(resolve, reject);
+            });
+
+            function findUsers(resolve, reject){
+                modelUser.find(filter).then(data => {
                     if(data.empty()){
-                        return callback({
+                        resolve({
                             body: {
                                 name: "Not found",
                                 description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
@@ -26,18 +22,30 @@ class UserService{
                             status: responseHand.statusCodes.clientError.notFound
                         });
                     }else{
-                        return callback({
-                            status: responseHand.statusCodes.success.ok,
-                            body: data.map(responseHand.createLinksGet)
+                        resolve({
+                            body: data.map(responseHand.createLinksGet),
+                            status: responseHand.statusCodes.success.ok
                         });
                     }
+
                 }).catch(error => {
-                    return callback({
+                    reject({
                         body: error,
                         status: responseHand.statusCodes.clientError.badRequest
                     });
+
                 });
+            };
+
         }
+
+        return Promise.all([this.connect(), getUsersDatabase()]).then(promises => {
+            callback(promises[promises.lastIndex()]);
+
+        }).catch(error => {
+            callback(error);
+            
+        })
     }
     
     createUsers(usersData, callback){
@@ -240,8 +248,28 @@ class UserService{
         }
     }
     
+    connect(){
+        return new Promise((resolve, reject) => {
+            mongoDB.connect().then(dataBase => {
+                resolve(dataBase);
+
+            }).catch(error => {
+                reject(error);
+
+            });
+        });
+    }
+
     disconnect(){
-        return mongoDB.disconnect(() => {});
+        return new Promise((resolve, reject) => {
+            mongoDB.disconnect().then(dataBaseClose => {
+                resolve(dataBaseClose);
+
+            }).catch(error => {
+                reject(error);
+
+            });
+        });
     }
 
 }

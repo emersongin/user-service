@@ -26,7 +26,7 @@ class UserController{
             return responseHand.notModified(request, response, next, "Fresh resource.");
         }
 
-        controllerResponse.getUsers(filter, async function(error, data){
+        controllerResponse.getUsers(filter, async function(data){
             await responseHand.end(request, response, next, data);
             
             controllerResponse.disconnect();
@@ -45,7 +45,7 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
 
-        controllerResponse.createUsers(usersData, async function(error, data){
+        controllerResponse.createUsers(usersData, async function(data){
             await responseHand.end(request, response, next, data);
             
             controllerResponse.disconnect();
@@ -66,7 +66,7 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
         
-        controllerResponse.replaceUser(userID, {username, password}, async function(error, data){
+        controllerResponse.replaceUser(userID, {username, password}, async function(data){
             await responseHand.end(request, response, next, data);
             
             controllerResponse.disconnect();
@@ -86,7 +86,7 @@ class UserController{
                 "Use Content-type: application/json or application/x-www-form-urlencoded.");
         }
         
-        controllerResponse.updateUser(userID, userData, async function(error, data){
+        controllerResponse.updateUser(userID, userData, async function(data){
             await responseHand.end(request, response, next, data);
             
             controllerResponse.disconnect();
@@ -96,7 +96,7 @@ class UserController{
     deleteUser(request, response, next){
         let userID = request.params._id || '';
     
-        controllerResponse.deleteUser(userID, async function(error, data){
+        controllerResponse.deleteUser(userID, async function(data){
             await responseHand.end(request, response, next, data);
             
             controllerResponse.disconnect();

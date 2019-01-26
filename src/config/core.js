@@ -5,3 +5,7 @@ Array.prototype.empty = function(){
         return false;
     }
 }
+
+Array.prototype.lastIndex = function(){
+    return this.length - 1;
+}
