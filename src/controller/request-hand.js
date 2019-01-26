@@ -5,18 +5,27 @@ class RequestHand{
                 json: 'application/json',
                 urlencoded: 'application/x-www-form-urlencoded'
             }
-        }
+        };
+
+        this.accepts = null;
+        this.contentType = null;
     }
+
+    rules(options){
+        this.accepts = options.accepts;
+        this.contentTypes = options.contentTypes;
+    }
+
     cache(request){
         return request.fresh;
     }
 
-    acceptHeaders(request, options){
-        return !request.accepts(options);
+    acceptHeaders(request){
+        return !request.accepts(this.accepts);
     }
 
-    contentTypeHeaders(request, options){
-        return !request.is(options);
+    contentTypeHeaders(request){
+        return !request.is(this.contentTypes);
     }
 }
 

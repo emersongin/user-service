@@ -2,6 +2,16 @@ const controllerResponse = require('./controller-response');
 const requestHand = require('./request-hand');
 const responseHand = require('./response-hand');
 
+requestHand.rules({
+    accepts: [
+        requestHand.headers.contentType.json
+    ],
+    contentTypes: [
+        requestHand.headers.contentType.json,
+        requestHand.headers.contentType.urlencoded
+    ]
+});
+
 class ControllerRequest{
 
     getUserById(request, response, next){
@@ -10,11 +20,11 @@ class ControllerRequest{
         }
 
         if(requestHand.cache(request)){
-            return responseHand.notModified(request, response, next, "Fresh resource.");
+            return responseHand.notModified(response, "Fresh resource.");
         }
 
         controllerResponse.getUsers(filterUserID, async function(data){
-            await responseHand.end(request, response, next, data);
+            await responseHand.end(response, data);
 
             controllerResponse.disconnect();
         });
@@ -24,11 +34,11 @@ class ControllerRequest{
         let filter = request.body || {};
 
         if(requestHand.cache(request)){
-            return responseHand.notModified(request, response, next, "Fresh resource.");
+            return responseHand.notModified(response, "Fresh resource.");
         }
 
         controllerResponse.getUsers(filter, async function(data){
-            await responseHand.end(request, response, next, data);
+            await responseHand.end(response, data);
             
             controllerResponse.disconnect();
         });
@@ -36,22 +46,17 @@ class ControllerRequest{
     
     createUsers(request, response, next){
         let usersData = request.body;
-        let headers = requestHand.headers;
 
-        if(requestHand.acceptHeaders(request, headers.contentType.json)){
-            return responseHand.notAcceptable(request, response, next, "Use Accept: " + headers.contentType.json + ".");
+        if(requestHand.acceptHeaders(request)){
+            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
         }
 
-        if(requestHand.contentTypeHeaders([
-            headers.contentType.json, 
-            headers.contentType.urlencoded
-        ])){
-            return responseHand.unsupportedMediaType(request, response, next,
-                "Use Content-type: " + headers.contentType.json + "or" + headers.contentType.urlencoded + ".");
+        if(requestHand.contentTypeHeaders(request)){
+            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
         }
 
         controllerResponse.createUsers(usersData, async function(data){
-            await responseHand.end(request, response, next, data);
+            await responseHand.end(response, data);
             
             controllerResponse.disconnect();
         });
@@ -61,22 +66,17 @@ class ControllerRequest{
         let userID = request.params._id || '';
         let username = request.body.username || '';
         let password = request.body.password || '';
-        let headers = requestHand.headers;
 
-        if(requestHand.acceptHeaders(request, headers.contentType.json)){
-            return responseHand.notAcceptable(request, response, next, "Use Accept: " + headers.contentType.json + ".");
+        if(requestHand.acceptHeaders(request)){
+            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
         }
         
-        if(requestHand.contentTypeHeaders([
-            headers.contentType.json, 
-            headers.contentType.urlencoded
-        ])){
-            return responseHand.unsupportedMediaType(request, response, next, 
-                "Use Content-type: " + headers.contentType.json + "or" + headers.contentType.urlencoded + ".");
+        if(requestHand.contentTypeHeaders(request)){
+            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
         }
         
         controllerResponse.replaceUser(userID, {username, password}, async function(data){
-            await responseHand.end(request, response, next, data);
+            await responseHand.end(response, data);
             
             controllerResponse.disconnect();
         });
@@ -85,22 +85,17 @@ class ControllerRequest{
     updateUser(request, response, next){
         let userID = request.params._id || '';
         let userData = request.body;
-        let headers = requestHand.headers;
 
-        if(requestHand.acceptHeaders(request, headers.contentType.json)){
-            return responseHand.notAcceptable(request, response, next, "Use Accept: application/json.");
+        if(requestHand.acceptHeaders(request)){
+            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
         }
         
-        if(requestHand.contentTypeHeaders([
-            headers.contentType.json, 
-            headers.contentType.urlencoded
-        ])){
-            return responseHand.unsupportedMediaType(request, response, next, 
-                "Use Content-type: " + headers.contentType.json + "or" + headers.contentType.urlencoded + ".");
+        if(requestHand.contentTypeHeaders(request)){
+            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
         }
         
         controllerResponse.updateUser(userID, userData, async function(data){
-            await responseHand.end(request, response, next, data);
+            await responseHand.end(response, data);
             
             controllerResponse.disconnect();
         });
@@ -110,14 +105,14 @@ class ControllerRequest{
         let userID = request.params._id || '';
     
         controllerResponse.deleteUser(userID, async function(data){
-            await responseHand.end(request, response, next, data);
+            await responseHand.end(response, data);
             
             controllerResponse.disconnect();
         });
     }
 
     optionsUser(request, response, next){
-        responseHand.success(request, response, next, {
+        responseHand.end(response, {
             body: {
                 get: {
                     params: {
@@ -158,7 +153,7 @@ class ControllerRequest{
     }
 
     methodNotAllowed(request, response, next){
-        responseHand.methodNotAllowed(request, response, next, "Use the OPTIONS verb for methods options.");
+        responseHand.methodNotAllowed(response, "Use the OPTIONS verb for methods options.");
     }
 
 }
