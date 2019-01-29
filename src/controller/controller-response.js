@@ -34,8 +34,8 @@ class ControllerResponse{
                 });
             };
 
-            return new Promise((resolve, reject) => {
-                findUsers(resolve, reject);
+            return new Promise(async (resolve, reject) => {
+                await findUsers(resolve, reject);
             });
 
         }
@@ -64,20 +64,18 @@ class ControllerResponse{
                 return object['username'];
             }
 
-            function findUsernames(resolve, reject){
-                modelUser.findOne({username: { $in: usernames }}, 'username').then(data => {
-                    if(data){
+            return new Promise((resolve, reject) => {
+                let query =  modelUser.findOne({username: { $in: usernames }}, 'username');
+                
+                query.exec((error, data) => {
+                    if(error){
+                        reject(typeErrorResponse(error));
+                    }else if(data){
                         reject(typeErrorResponse({name: 'UsernameExist'}));
                     }else{
                         resolve(data);
                     }
-                }).catch(error => {
-                    reject(typeErrorResponse(error));
                 });
-            }
-
-            return new Promise((resolve, reject) => {
-                findUsernames(resolve, reject);
             });
         }
 
