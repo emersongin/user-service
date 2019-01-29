@@ -65,17 +65,18 @@ class ControllerResponse{
             }
 
             return new Promise((resolve, reject) => {
-                let query =  modelUser.findOne({username: { $in: usernames }}, 'username');
+                let query =  modelUser.find({username: { $exists: true, $in: usernames }}, 'username');
                 
-                query.exec((error, data) => {
-                    if(error){
-                        reject(typeErrorResponse(error));
-                    }else if(data){
-                        reject(typeErrorResponse({name: 'UsernameExist'}));
-                    }else{
+                query.exec().then(data => {
+                    if(data.empty()){
                         resolve(data);
+                    }else{
+                        reject(typeErrorResponse({name: 'UsernameExist'}));
                     }
+                }).catch(error => {
+                    reject(typeErrorResponse(error));
                 });
+
             });
         }
 
