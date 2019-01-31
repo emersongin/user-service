@@ -25,8 +25,6 @@ class ControllerRequest{
 
         controllerResponse.getUsers(filterUserID, async function(data){
             await responseHand.end(response, data);
-
-            controllerResponse.disconnect();
         });
     }
 
@@ -38,9 +36,7 @@ class ControllerRequest{
         }
 
         controllerResponse.getUsers(filter, async function(data){
-            await responseHand.end(response, data);
-            
-            controllerResponse.disconnect();
+            await responseHand.end(response, data);            
         });
     }
     
@@ -57,8 +53,6 @@ class ControllerRequest{
 
         controllerResponse.createUsers(usersData, async function(data){
             await responseHand.end(response, data);
-            
-            controllerResponse.disconnect();
         });
     }
 
@@ -77,8 +71,6 @@ class ControllerRequest{
         
         controllerResponse.replaceUser(userID, {username, password}, async function(data){
             await responseHand.end(response, data);
-            
-            controllerResponse.disconnect();
         });
     }
 
@@ -96,8 +88,6 @@ class ControllerRequest{
         
         controllerResponse.updateUser(userID, userData, async function(data){
             await responseHand.end(response, data);
-            
-            controllerResponse.disconnect();
         });
     }
 
@@ -106,8 +96,6 @@ class ControllerRequest{
     
         controllerResponse.deleteUser(userID, async function(data){
             await responseHand.end(response, data);
-            
-            controllerResponse.disconnect();
         });
     }
 

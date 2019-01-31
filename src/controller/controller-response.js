@@ -49,8 +49,22 @@ class ControllerResponse{
         });
     }
     
-    createUsers(usersData, callback){
-   
+    async createUsers(usersData, callback){
+        try{
+            let databaseConnection = await this.connect();
+            let usernames = await checkUsernames();
+            let newUsers = await createUsersDatabase();
+
+            callback(newUsers);
+            
+        }catch(error){
+            callback(error);
+
+        }finally{
+            await this.disconnect();
+
+        }
+
         function checkUsernames(){
             let usernames;
 
@@ -71,7 +85,7 @@ class ControllerResponse{
                     if(data.empty()){
                         resolve(data);
                     }else{
-                        reject(typeErrorResponse({name: 'UsernameExist'}));
+                        reject(typeErrorResponse({name: 'UsernamesExists'}));
                     }
                 }).catch(error => {
                     reject(typeErrorResponse(error));
@@ -81,10 +95,9 @@ class ControllerResponse{
         }
 
         function createUsersDatabase(){
-            
+
             function createUsers(resolve, reject){
                 modelUser.create(usersData).then(data => {
-                    console.log('criou!');
                     resolve({
                         header: {
                             'Location': `/users/:id`
@@ -104,12 +117,12 @@ class ControllerResponse{
 
         function typeErrorResponse(error){
             switch(error.name){
-                case 'UsernameExist':
+                case 'UsernamesExists':
                     return {
                         body: {
                             name: "Duplicate resource",
                             description: "The request could not be completed due to a conflict with the current state of the target resource.",
-                            message: "Username is exist."
+                            message: "Usernames is exists."
                         }, 
                         status: responseHand.statusCodes.clientError.conflict
                     };
@@ -126,15 +139,7 @@ class ControllerResponse{
                         status: responseHand.statusCodes.clientError.badRequest
                     };
             }
-        }
-
-        return Promise.all([this.connect(), checkUsernames(), createUsersDatabase()]).then(promises => {
-            callback(promises[promises.lastIndex()]);
-
-        }).catch(error => {
-            callback(error);
-            
-        });
+        } 
     }
     
     replaceUser(userID, userData, callback){
@@ -259,8 +264,8 @@ class ControllerResponse{
     
     connect(){
         return new Promise((resolve, reject) => {
-            mongoDB.connect().then(dataBase => {
-                resolve(dataBase);
+            mongoDB.connect().then(databaseConnection => {
+                resolve(databaseConnection);
 
             }).catch(error => {
                 reject(error);

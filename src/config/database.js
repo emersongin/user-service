@@ -18,13 +18,12 @@ class DataBaseConnect{
 
         return new Promise((resolve, reject) => {
             if(this.databaseConnection){
-                resolve(this.databaseConnection.db);
+                resolve(this.databaseConnection);
             }
 
-            mongooseModule.connect(connection, connectOptions)
-                .then(connectionMongoDB => {
+            mongooseModule.connect(connection, connectOptions).then(connectionMongoDB => {
                     this.databaseConnection = connectionMongoDB;
-                    resolve(this.databaseConnection.db);
+                    resolve(this.databaseConnection);
 
                     console.log(`DATABASE: ${this.databaseName}, connected on port: ${this.databasePort}`);
                 }).catch(error => {
@@ -41,14 +40,14 @@ class DataBaseConnect{
     disconnect(){
         return new Promise((resolve, reject) => {
             if(!this.databaseConnection){
-                resolve(true);
+                console.log(`DATABASE: ${this.databaseName}, connection not found!`);
+                return resolve(true);
             }
 
-            mongooseModule.connection.close()
-                .then(disconnectionMongoDB => {
+            mongooseModule.connection.close().then(disconnectionMongoDB => {
                     this.databaseConnection = null;
                     resolve(true);
-
+  
                     console.log(`DATABASE: ${this.databaseName}, is disconnected!`);
                 }).catch(error => {
                     reject(error);
