@@ -4,13 +4,30 @@ const responseHand = require('./response-hand');
 
 class ControllerResponse{
 
-    getUsers(filter, callback){
-        function getUsersDatabase(){
+    async getUsers(filter, callback){
+        try{
+            const databaseConnection = await this.connect();
+            const users = await getUsersDatabase();
 
-            function findUsers(resolve, reject){
-                modelUser.find(filter).then(data => {
+            callback(users);
+            
+        }catch(error){
+            callback(error);
+
+        }finally{
+            await this.disconnect();
+
+        }
+
+        function getUsersDatabase(){
+            return new Promise(async function(resolve, reject){
+                const query = modelUser.find(filter);
+
+                try{
+                    const data = await query.exec();
+
                     if(data.empty()){
-                        reject({
+                        return reject({
                             body: {
                                 name: "Not found",
                                 description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
@@ -19,41 +36,27 @@ class ControllerResponse{
                             status: responseHand.statusCodes.clientError.notFound
                         });
                     }else{
-                        resolve({
+                        return resolve({
                             body: data.map(responseHand.createLinksGet),
                             status: responseHand.statusCodes.success.ok
                         });
                     }
-
-                }).catch(error => {
-                    reject({
+                }catch(error){
+                    return reject({
                         body: error,
                         status: responseHand.statusCodes.clientError.badRequest
                     });
-
-                });
-            };
-
-            return new Promise(async (resolve, reject) => {
-                await findUsers(resolve, reject);
+                }
             });
 
         }
-
-        return Promise.all([this.connect(), getUsersDatabase()]).then(promises => {
-            callback(promises[promises.lastIndex()]);
-
-        }).catch(error => {
-            callback(error);
-            
-        });
     }
     
     async createUsers(usersData, callback){
         try{
-            let databaseConnection = await this.connect();
-            let usernames = await checkUsernames();
-            let newUsers = await createUsersDatabase();
+            const databaseConnection = await this.connect();
+            const usernames = await checkUsernames();
+            const newUsers = await createUsersDatabase();
 
             callback(newUsers);
             
@@ -69,60 +72,59 @@ class ControllerResponse{
             let usernames;
 
             if(Array.isArray(usersData)){
-                usernames = usersData.map(mapUsernames);
+                usernames = usersData.map(object => object['username']);
             }else{
                 usernames = usersData.username;
             }
 
-            function mapUsernames(object, index, array){
-                return object['username'];
-            }
-
-            return new Promise((resolve, reject) => {
-                let query =  modelUser.find({username: { $exists: true, $in: usernames }}, 'username');
+            return new Promise(async function(resolve, reject){
+                const query =  modelUser.find({username: {$exists: true, $in: usernames}}, 'username');
                 
-                query.exec().then(data => {
-                    if(data.empty()){
-                        resolve(data);
-                    }else{
-                        reject(typeErrorResponse({name: 'UsernamesExists'}));
-                    }
-                }).catch(error => {
-                    reject(typeErrorResponse(error));
-                });
+                try{
+                    const data = await query.exec();
 
+                    if(data.empty()){
+                        return resolve(data);
+                    }else{
+                        return reject(errorResponse({
+                            name: 'UsernamesExists',
+                            data
+                        }));
+                    }
+
+                }catch(error){
+                    return reject(errorResponse(error));
+
+                }
             });
         }
 
         function createUsersDatabase(){
+            return new Promise(async function(resolve, reject){
+                try{
+                    const data = await modelUser.insertMany(usersData);
 
-            function createUsers(resolve, reject){
-                modelUser.create(usersData).then(data => {
-                    resolve({
-                        header: {
-                            'Location': `/users/:id`
-                        },
+                    return resolve({
                         body: data,
                         status: responseHand.statusCodes.success.created
-                    })
-                }).catch(error => {
-                    reject(typeErrorResponse(error));
-                });
-            }
+                    });
 
-            return new Promise((resolve, reject) => {
-                createUsers(resolve, reject);
+                }catch(error){
+                    return reject(errorResponse(error));
+
+                }
             });
         }
 
-        function typeErrorResponse(error){
+        function errorResponse(error){
             switch(error.name){
                 case 'UsernamesExists':
                     return {
                         body: {
                             name: "Duplicate resource",
                             description: "The request could not be completed due to a conflict with the current state of the target resource.",
-                            message: "Usernames is exists."
+                            message: "Usernames is exists.",
+                            usernames: error.data
                         }, 
                         status: responseHand.statusCodes.clientError.conflict
                     };
@@ -142,40 +144,47 @@ class ControllerResponse{
         } 
     }
     
-    replaceUser(userID, userData, callback){
-        mongoDB.connect(function(error, database){
-            if(error){
-                return callback(error, null);
-            }else{
-                replaceUserDatabase();
-            }
-        });
+    async replaceUser(filter, userDataReplace, callback){
+        try{
+            const databaseConnection = await this.connect();
+            const usersReplace = await replaceUsersDatabase();
 
-        function replaceUserDatabase(){
-            modelUser.findByIdAndUpdate(userID, userData, {
-                new: true,
-                runValidators: true
-            }, function(error, data){
-                if(error){
-                    return callback({
+            callback(usersReplace);
+            
+        }catch(error){
+            callback(error);
+
+        }finally{
+            await this.disconnect();
+
+        }
+
+        function replaceUsersDatabase(){
+            return Promise(async function(resolve, reject){
+                const query = modelUser.updateMany(filter, {$set: userDataReplace}, {new: true, runValidators: true});
+                
+                try{
+                    const data = await query.exec();
+
+                    if(data.empty()){
+                        return reject({
+                            body: {
+                                name: "Not found",
+                                description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
+                                message: "Check the request parameter; :id."
+                            }, 
+                            status: responseHand.statusCodes.clientError.notFound
+                        });
+                    }else{
+                        return resolve({
+                            body: data,
+                            status: responseHand.statusCodes.success.ok
+                        });
+                    }
+                }catch(error){
+                    return reject({
                         body: error, 
                         status: responseHand.statusCodes.clientError.badRequest
-                    }, null);
-
-                }else if(!data){
-                    return callback({
-                        body: {
-                            name: "Not found",
-                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
-                            message: "Check the request parameter; :id."
-                        }, 
-                        status: responseHand.statusCodes.clientError.notFound
-                    }, null);
-
-                }else{
-                    return callback(null, {
-                        body: data,
-                        status: responseHand.statusCodes.success.ok
                     });
 
                 }

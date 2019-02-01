@@ -17,14 +17,14 @@ class ControllerRequest{
     getUserById(request, response, next){
         let filterUserID = {
             _id: request.params._id || ''
-        }
+        };
 
         if(requestHand.cacheHeaders(request)){
             return responseHand.notModified(response, "Fresh resource.");
         }
 
-        controllerResponse.getUsers(filterUserID, async function(data){
-            await responseHand.end(response, data);
+        controllerResponse.getUsers(filterUserID, function(data){
+            responseHand.end(response, data);
         });
     }
 
@@ -35,13 +35,13 @@ class ControllerRequest{
             return responseHand.notModified(response, "Fresh resource.");
         }
 
-        controllerResponse.getUsers(filter, async function(data){
-            await responseHand.end(response, data);            
+        controllerResponse.getUsers(filter, function(data){
+            responseHand.end(response, data);
         });
     }
     
     createUsers(request, response, next){
-        let usersData = request.body;
+        let usersData = request.body || {};
 
         if(requestHand.acceptHeaders(request)){
             return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
@@ -51,15 +51,16 @@ class ControllerRequest{
             return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
         }
 
-        controllerResponse.createUsers(usersData, async function(data){
-            await responseHand.end(response, data);
+        controllerResponse.createUsers(usersData, function(data){
+            responseHand.end(response, data);
         });
     }
 
-    replaceUser(request, response, next){
-        let userID = request.params._id || '';
-        let username = request.body.username || '';
-        let password = request.body.password || '';
+    replaceUserById(request, response, next){
+        let filterUserID = {
+            _id: request.params._id || ''
+        };
+        let userDataReplace = request.body || {};
 
         if(requestHand.acceptHeaders(request)){
             return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
@@ -69,14 +70,14 @@ class ControllerRequest{
             return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
         }
         
-        controllerResponse.replaceUser(userID, {username, password}, async function(data){
-            await responseHand.end(response, data);
+        controllerResponse.replaceUser(filterUserID, userDataReplace, function(data){
+            responseHand.end(response, data);
         });
     }
 
     updateUser(request, response, next){
         let userID = request.params._id || '';
-        let userData = request.body;
+        let userData = request.body || {};
 
         if(requestHand.acceptHeaders(request)){
             return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
@@ -86,16 +87,16 @@ class ControllerRequest{
             return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
         }
         
-        controllerResponse.updateUser(userID, userData, async function(data){
-            await responseHand.end(response, data);
+        controllerResponse.updateUser(userID, userData, function(data){
+            responseHand.end(response, data);
         });
     }
 
     deleteUser(request, response, next){
         let userID = request.params._id || '';
     
-        controllerResponse.deleteUser(userID, async function(data){
-            await responseHand.end(response, data);
+        controllerResponse.deleteUser(userID, function(data){
+            responseHand.end(response, data);
         });
     }
 

@@ -17,12 +17,14 @@ module.exports = function(expressServer){
         userAPI.route('/v0/users')
             .get(controllerRequest.getUsers)
             .post(controllerRequest.createUsers)
+            
             .options(controllerRequest.optionsUser)
             .all(controllerRequest.methodNotAllowed);
 
         userAPI.route('/v0/users/:_id')
             .get(controllerRequest.getUserById)
-            .put(controllerRequest.replaceUser)
+            .put(controllerRequest.replaceUserById)
+
             .patch(controllerRequest.updateUser)
             .delete(controllerRequest.deleteUser)
             .options(controllerRequest.optionsUser)
