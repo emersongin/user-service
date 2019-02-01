@@ -160,8 +160,8 @@ class ControllerResponse{
         }
 
         function replaceUsersDatabase(){
-            return Promise(async function(resolve, reject){
-                const query = modelUser.updateMany(filter, {$set: userDataReplace}, {new: true, runValidators: true});
+            return new Promise(async function(resolve, reject){
+                const query = modelUser.update(filter, {$set: userDataReplace.username}, {overwrite: true});
                 
                 try{
                     const data = await query.exec();
