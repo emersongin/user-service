@@ -144,10 +144,10 @@ class ControllerResponse{
         } 
     }
     
-    async replaceUser(filter, userDataReplace, callback){
+    async updateUsers(filter, userDataReplace, optios, callback){
         try{
             const databaseConnection = await this.connect();
-            const usersReplace = await replaceUsersDatabase();
+            const usersReplace = await updateUsersDatabase();
 
             callback(usersReplace);
             
@@ -159,14 +159,17 @@ class ControllerResponse{
 
         }
 
-        function replaceUsersDatabase(){
-            return new Promise(async function(resolve, reject){
-                const query = modelUser.update(filter, {$set: userDataReplace.username}, {overwrite: true});
-                
+        function updateUsersDatabase(){
+            return new Promise(async function(resolve, reject){                
                 try{
-                    const data = await query.exec();
+                    const data = await modelUser.update(filter, userDataReplace, optios);
 
-                    if(data.empty()){
+                    if(data.ok && data.nModified){
+                        return resolve({
+                            body: data,
+                            status: responseHand.statusCodes.success.ok
+                        });
+                    }else{
                         return reject({
                             body: {
                                 name: "Not found",
@@ -175,57 +178,11 @@ class ControllerResponse{
                             }, 
                             status: responseHand.statusCodes.clientError.notFound
                         });
-                    }else{
-                        return resolve({
-                            body: data,
-                            status: responseHand.statusCodes.success.ok
-                        });
                     }
                 }catch(error){
                     return reject({
                         body: error, 
                         status: responseHand.statusCodes.clientError.badRequest
-                    });
-
-                }
-            });
-        }
-    }
-
-    updateUser(userID, userData, callback){
-        mongoDB.connect(function(error, database){
-            if(error){
-                return callback(error, null);
-            }else{
-                updateUserDatabase();
-            }
-        });
-
-        function updateUserDatabase(){
-            modelUser.findByIdAndUpdate(userID, {$set: userData}, {
-                new: true, 
-                runValidators: true
-            }, function(error, data){
-                if(error){
-                    return callback({
-                        body: error, 
-                        status: responseHand.statusCodes.clientError.badRequest
-                    }, null);
-
-                }else if(!data){
-                    return callback({
-                        body: {
-                            name: "Not found",
-                            description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
-                            message: "Check the request parameter; :id."
-                        }, 
-                        status: responseHand.statusCodes.clientError.notFound
-                    }, null);
-
-                }else{
-                    return callback(null, {
-                        body: data,
-                        status: responseHand.statusCodes.success.ok
                     });
 
                 }

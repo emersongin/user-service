@@ -14,20 +14,6 @@ requestHand.rules({
 
 class ControllerRequest{
 
-    getUserById(request, response, next){
-        let filterUserID = {
-            _id: request.params._id || ''
-        };
-
-        if(requestHand.cacheHeaders(request)){
-            return responseHand.notModified(response, "Fresh resource.");
-        }
-
-        controllerResponse.getUsers(filterUserID, function(data){
-            responseHand.end(response, data);
-        });
-    }
-
     getUsers(request, response, next){
         let filter = request.body || {};
 
@@ -56,11 +42,26 @@ class ControllerRequest{
         });
     }
 
+    getUserById(request, response, next){
+        let filterUserID = {
+            _id: request.params._id || ''
+        };
+
+        if(requestHand.cacheHeaders(request)){
+            return responseHand.notModified(response, "Fresh resource.");
+        }
+
+        controllerResponse.getUsers(filterUserID, function(data){
+            responseHand.end(response, data);
+        });
+    }
+
     replaceUserById(request, response, next){
         let filterUserID = {
             _id: request.params._id || ''
         };
         let userDataReplace = request.body || {};
+        let options = {}
 
         if(requestHand.acceptHeaders(request)){
             return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
@@ -70,24 +71,7 @@ class ControllerRequest{
             return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
         }
         
-        controllerResponse.replaceUser(filterUserID, userDataReplace, function(data){
-            responseHand.end(response, data);
-        });
-    }
-
-    updateUser(request, response, next){
-        let userID = request.params._id || '';
-        let userData = request.body || {};
-
-        if(requestHand.acceptHeaders(request)){
-            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
-        }
-        
-        if(requestHand.contentTypeHeaders(request)){
-            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
-        }
-        
-        controllerResponse.updateUser(userID, userData, function(data){
+        controllerResponse.replaceUser(filterUserID, userDataReplace, options, function(data){
             responseHand.end(response, data);
         });
     }
