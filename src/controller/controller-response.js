@@ -7,26 +7,21 @@ class ControllerResponse{
     async getUsers(filter, callback){
         try{
             const databaseConnection = await this.connect();
-            const users = await getUsersDatabase();
+            const usersFound = await getUsersDatabase();
 
-            callback(users);
-            
+            callback(usersFound);
         }catch(error){
             callback(error);
-
         }finally{
             await this.disconnect();
-
         }
 
         function getUsersDatabase(){
             return new Promise(async function(resolve, reject){
-                const query = modelUser.find(filter);
-
                 try{
-                    const data = await query.exec();
+                    const queryData = await modelUser.find(filter).exec();
 
-                    if(data.empty()){
+                    if(queryData.empty()){
                         return reject({
                             body: {
                                 name: "Not found",
@@ -37,7 +32,7 @@ class ControllerResponse{
                         });
                     }else{
                         return resolve({
-                            body: data.map(responseHand.createLinksGet),
+                            body: queryData.map(responseHand.createLinksGet),
                             status: responseHand.statusCodes.success.ok
                         });
                     }
@@ -48,53 +43,47 @@ class ControllerResponse{
                     });
                 }
             });
-
         }
     }
     
-    async createUsers(usersData, callback){
+    async createUsers(dataCreate, callback){
         try{
             const databaseConnection = await this.connect();
             const usernames = await checkUsernames();
-            const newUsers = await createUsersDatabase();
+            const usersCreated = await createUsersDatabase();
 
-            callback(newUsers);
-            
+            callback(usersCreated);       
         }catch(error){
             callback(error);
-
         }finally{
             await this.disconnect();
-
         }
 
         function checkUsernames(){
             let usernames;
 
-            if(Array.isArray(usersData)){
-                usernames = usersData.map(object => object['username']);
+            if(Array.isArray(dataCreate)){
+                usernames = dataCreate.map(object => object['username']);
             }else{
-                usernames = usersData.username;
+                usernames = dataCreate.username;
             }
 
             return new Promise(async function(resolve, reject){
                 const query =  modelUser.find({username: {$exists: true, $in: usernames}}, 'username');
                 
                 try{
-                    const data = await query.exec();
+                    const queryData = await query.exec();
 
-                    if(data.empty()){
-                        return resolve(data);
+                    if(queryData.empty()){
+                        return resolve([null]);
                     }else{
                         return reject(errorResponse({
                             name: 'UsernamesExists',
                             data
                         }));
                     }
-
                 }catch(error){
                     return reject(errorResponse(error));
-
                 }
             });
         }
@@ -102,16 +91,14 @@ class ControllerResponse{
         function createUsersDatabase(){
             return new Promise(async function(resolve, reject){
                 try{
-                    const data = await modelUser.insertMany(usersData);
+                    const createdUsers = await modelUser.insertMany(dataCreate);
 
                     return resolve({
-                        body: data,
+                        body: createdUsers,
                         status: responseHand.statusCodes.success.created
                     });
-
                 }catch(error){
                     return reject(errorResponse(error));
-
                 }
             });
         }
@@ -144,29 +131,26 @@ class ControllerResponse{
         } 
     }
     
-    async updateUsers(filter, userDataReplace, optios, callback){
+    async updateUsers(filter, dataUpdate, optios, callback){
         try{
             const databaseConnection = await this.connect();
-            const usersReplace = await updateUsersDatabase();
+            const usersUpdated = await updateUsersDatabase();
 
-            callback(usersReplace);
-            
+            callback(usersUpdated);
         }catch(error){
             callback(error);
-
         }finally{
             await this.disconnect();
-
         }
 
         function updateUsersDatabase(){
             return new Promise(async function(resolve, reject){                
                 try{
-                    const data = await modelUser.update(filter, userDataReplace, optios);
+                    const queryData = await modelUser.update(filter, dataUpdate, optios);
 
-                    if(data.ok && data.nModified){
+                    if(queryData.ok && queryData.nModified){
                         return resolve({
-                            body: data,
+                            body: queryData,
                             status: responseHand.statusCodes.success.ok
                         });
                     }else{
@@ -184,7 +168,6 @@ class ControllerResponse{
                         body: error, 
                         status: responseHand.statusCodes.clientError.badRequest
                     });
-
                 }
             });
         }
