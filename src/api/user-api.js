@@ -18,8 +18,9 @@ module.exports = function(expressServer){
             .get(controllerRequest.getUsers)
             .post(controllerRequest.createUsers)
             .patch(controllerRequest.updateUsers)
-
-            .options(controllerRequest.optionsUser)
+            
+            .delete(controllerRequest.deleteUsers)
+            .options(controllerRequest.optionsUsers)
             .all(controllerRequest.methodNotAllowed);
 
         userAPI.route('/v0/users/:_id')
@@ -27,8 +28,8 @@ module.exports = function(expressServer){
             .put(controllerRequest.replaceUserById)
             .patch(controllerRequest.updateUserById)
 
-            .delete(controllerRequest.deleteUser)
-            .options(controllerRequest.optionsUser)
+            .delete(controllerRequest.deleteUserById)
+            .options(controllerRequest.optionsUsers)
             .all(controllerRequest.methodNotAllowed);
     }
     

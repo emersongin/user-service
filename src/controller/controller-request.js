@@ -18,7 +18,7 @@ class ControllerRequest{
         let filter = request.body || {};
 
         if(requestHand.cacheHeaders(request)){
-            return responseHand.notModified(response, "Fresh resource.");
+            return responseHand.end(response, responseHand.notModified("Fresh resource."));
         }
 
         controllerResponse.getUsers(filter, function(data){
@@ -26,55 +26,32 @@ class ControllerRequest{
         });
     }
     
-    createUsers(request, response, next){
-        let usersData = request.body || {};
-
-        if(requestHand.acceptHeaders(request)){
-            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
-        }
-
-        if(requestHand.contentTypeHeaders(request)){
-            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
-        }
-
-        controllerResponse.createUsers(usersData, function(data){
-            responseHand.end(response, data);
-        });
-    }
-
-    updateUsers(request, response, next){
-        let filterParams = request.body.filter;
-        let userDataUpdate = {$set: request.body.data} || {};
-
-        let optionsUpdateMultiple = {
-            overwrite: false,
-            multi: true,
-            runValidators: false
-        }
-
-        if(requestHand.acceptHeaders(request)){
-            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
-        }
-        
-        if(requestHand.contentTypeHeaders(request)){
-            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
-        }
-        
-        controllerResponse.updateUsers(filterParams, userDataUpdate, optionsUpdateMultiple, function(data){
-            responseHand.end(response, data);
-        });
-    }
-
     getUserById(request, response, next){
         let filterUserID = {
             _id: request.params._id || ''
         };
 
         if(requestHand.cacheHeaders(request)){
-            return responseHand.notModified(response, "Fresh resource.");
+            return responseHand.end(response, responseHand.notModified("Fresh resource."));
         }
 
         controllerResponse.getUsers(filterUserID, function(data){
+            responseHand.end(response, data);
+        });
+    }
+
+    createUsers(request, response, next){
+        let dataCreate = request.body || {};
+
+        if(requestHand.acceptHeaders(request)){
+            return responseHand.end(response, responseHand.notAcceptable("Use Accept: " + requestHand.accepts + "."));
+        }
+
+        if(requestHand.contentTypeHeaders(request)){
+            return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
+        }
+
+        controllerResponse.createUsers(dataCreate, function(data){
             responseHand.end(response, data);
         });
     }
@@ -83,23 +60,46 @@ class ControllerRequest{
         let filterUserID = {
             _id: request.params._id || ''
         };
-        let userDataReplace = request.body || {};
+        let dataReplace = request.body || {};
 
-        let optionsUpdateToReplace = {
+        let optionsReplace = {
             overwrite: true,
             multi: false,
             runValidators: true
         }
 
         if(requestHand.acceptHeaders(request)){
-            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
+            return responseHand.end(response, responseHand.notAcceptable("Use Accept: " + requestHand.accepts + "."));
         }
         
         if(requestHand.contentTypeHeaders(request)){
-            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
+            return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
         }
         
-        controllerResponse.updateUsers(filterUserID, userDataReplace, optionsUpdateToReplace, function(data){
+        controllerResponse.updateUsers(filterUserID, dataReplace, optionsReplace, function(data){
+            responseHand.end(response, data);
+        });
+    }
+
+    updateUsers(request, response, next){
+        let filterParams = request.body.filter;
+        let dataUpdate = {$set: request.body.data} || {};
+
+        let optionsUpdateMultiple = {
+            overwrite: false,
+            multi: true,
+            runValidators: false
+        }
+
+        if(requestHand.acceptHeaders(request)){
+            return responseHand.end(response, responseHand.notAcceptable("Use Accept: " + requestHand.accepts + "."));
+        }
+        
+        if(requestHand.contentTypeHeaders(request)){
+            return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
+        }
+        
+        controllerResponse.updateUsers(filterParams, dataUpdate, optionsUpdateMultiple, function(data){
             responseHand.end(response, data);
         });
     }
@@ -108,7 +108,7 @@ class ControllerRequest{
         let filterUserID = {
             _id: request.params._id || ''
         };
-        let userDataUpdate = {$set: request.body} || {};
+        let dataUpdate = {$set: request.body} || {};
         
         let optionsUpdate = {
             overwrite: false,
@@ -117,27 +117,35 @@ class ControllerRequest{
         };
 
         if(requestHand.acceptHeaders(request)){
-            return responseHand.notAcceptable(response, "Use Accept: " + requestHand.accepts + ".");
+            return responseHand.end(response, responseHand.notAcceptable("Use Accept: " + requestHand.accepts + "."));
         }
         
         if(requestHand.contentTypeHeaders(request)){
-            return responseHand.unsupportedMediaType(response, "Use Content-type: " + requestHand.contentTypes + ".");
+            return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
         }
         
-        controllerResponse.updateUsers(filterUserID, userDataUpdate, optionsUpdate, function(data){
+        controllerResponse.updateUsers(filterUserID, dataUpdate, optionsUpdate, function(data){
             responseHand.end(response, data);
         });
     }
 
-    deleteUser(request, response, next){
-        let userID = request.params._id || '';
+    deleteUsers(request, response, next){
+        let filter = request.body || {};
     
-        controllerResponse.deleteUser(userID, function(data){
+        controllerResponse.deleteUsers(filter, function(data){
             responseHand.end(response, data);
         });
     }
 
-    optionsUser(request, response, next){
+    deleteUserById(request, response, next){
+        let filterUserID = request.params._id || '';
+    
+        controllerResponse.deleteUsers(filterUserID, function(data){
+            responseHand.end(response, data);
+        });
+    }
+
+    optionsUsers(request, response, next){
         responseHand.end(response, {
             body: {
                 get: {
@@ -179,7 +187,7 @@ class ControllerRequest{
     }
 
     methodNotAllowed(request, response, next){
-        responseHand.methodNotAllowed(response, "Use the OPTIONS verb for methods options.");
+        return responseHand.end(response, responseHand.methodNotAllowed("Use the OPTIONS verb for methods options."));
     }
 
 }

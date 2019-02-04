@@ -86,48 +86,110 @@ class ResponseHand{
                 .json(data.body);
     }
 
-    notAcceptable(response, message){
-        this.end(response, {
+    ok(data, message){
+        return {
+            body: data,
+            status: this.statusCodes.success.ok
+        };
+    }
+
+    created(data, message){
+        return {
+            body: data,
+            status: this.statusCodes.success.created
+        };
+    }
+
+    badRequest(error, message){
+        return {
+            body: error,
+            status: this.statusCodes.clientError.badRequest
+        };
+    }
+
+    forbidden(error, message){
+        return {
+            body: error,
+            status: this.statusCodes.clientError.forbidden
+        };
+    }
+
+    conflict(error, message){
+        return {
+            body: {
+                name: "Duplicate resource",
+                description: "The request could not be completed due to a conflict with the current state of the target resource.",
+                message,
+                usernames: error
+            }, 
+            status: this.statusCodes.clientError.conflict
+        };
+    }
+
+    notAcceptable(message){
+        return {
             body: {
                 name: "Not acceptable",
                 description: "The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request1, and the server is unwilling to supply a default representation.",
-                message: message
+                message
             },
             status: this.statusCodes.clientError.notAcceptable
-        });
+        };
     }
 
-    unsupportedMediaType(response, message){
-        this.end(response, {
+    unsupportedMediaType(message){
+        return {
             body: {
                 name: "MIME type unsupported",
                 description: "The origin server is refusing to service the request because the payload is in a format not supported by this method on the target resource.",
-                message: message
+                message
             },
             status: this.statusCodes.clientError.unsupportedMediaType
-        });
+        };
     }
 
-    methodNotAllowed(response, message){
-        this.end(response, {
+    methodNotAllowed(message){
+        return {
             body: {
                 name: "Method not allowed",
                 description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
-                message: message
+                message
             },
             status: this.statusCodes.clientError.methodNotAllowed
-        });
+        };
     }
 
-    notModified(response, message){
-        this.end(response, {
+    notModified(message){
+        return {
             body: {
                 name: "Not Modified",
                 description: "The conditional is valid.",
-                message: message
+                message
             },
             status: this.statusCodes.redirection.notModified
-        });
+        };
+    }
+
+    gone(message){
+        return {
+            body: {
+                name: "Resource is gone",
+                description: "The target resource is no longer available at the origin server and that this condition is likely to be permanent.",
+                message
+            }, 
+            status: this.statusCodes.clientError.gone
+        };
+    }
+
+    notFound(message){
+        return {
+            body: {
+                name: "Not found",
+                description: "The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.",
+                message
+            }, 
+            status: this.statusCodes.clientError.notFound
+        };
     }
 
     createLinksGet(object, index, array){
