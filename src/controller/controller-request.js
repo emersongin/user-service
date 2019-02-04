@@ -138,11 +138,13 @@ class ControllerRequest{
     }
 
     deleteUserById(request, response, next){
-        let filterUserID = request.params._id || '';
+        let filterUserID = {
+            _id: request.params._id || ''
+        };
     
         controllerResponse.deleteUsers(filterUserID, function(data){
             responseHand.end(response, data);
-        });
+        });''
     }
 
     optionsUsers(request, response, next){

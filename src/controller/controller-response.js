@@ -145,21 +145,15 @@ class ControllerResponse{
         function deleteUsersDatabase(){
             return new Promise(async function(resolve, reject){
                 try{
-                    const queryData = await modelUser.delete(filter).exec();
+                    const queryData = await modelUser.remove(filter).exec();
 
-                    if(queryData){
-                        return resolve({
-                            body: data,
-                            status: responseHand.statusCodes.success.noContent
-                        });
+                    if(queryData.ok && queryData.n){
+                        return resolve(responseHand.noContent(queryData));
                     }else{
                         return reject(responseHand.gone("Check the request parameter; :id."));
                     }
                 }catch(error){
-                    return reject({
-                        body: error, 
-                        status: responseHand.statusCodes.clientError.badRequest
-                    });
+                    return reject(responseHand.badRequest(error));
                 }
             });
         }

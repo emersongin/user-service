@@ -100,6 +100,13 @@ class ResponseHand{
         };
     }
 
+    noContent(data, message){
+        return {
+            body: data,
+            status: this.statusCodes.success.noContent
+        };
+    }
+
     badRequest(error, message){
         return {
             body: error,

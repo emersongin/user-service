@@ -18,7 +18,6 @@ module.exports = function(expressServer){
             .get(controllerRequest.getUsers)
             .post(controllerRequest.createUsers)
             .patch(controllerRequest.updateUsers)
-            
             .delete(controllerRequest.deleteUsers)
             .options(controllerRequest.optionsUsers)
             .all(controllerRequest.methodNotAllowed);
@@ -27,7 +26,6 @@ module.exports = function(expressServer){
             .get(controllerRequest.getUserById)
             .put(controllerRequest.replaceUserById)
             .patch(controllerRequest.updateUserById)
-
             .delete(controllerRequest.deleteUserById)
             .options(controllerRequest.optionsUsers)
             .all(controllerRequest.methodNotAllowed);
