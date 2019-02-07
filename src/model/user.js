@@ -13,6 +13,7 @@ const cardSchema = new SchemaMongoose({
         type: String
     }
 });
+
 const documentSchema = new SchemaMongoose({
     type: {
         type: String
@@ -24,6 +25,7 @@ const documentSchema = new SchemaMongoose({
         type: String
     }
 });
+
 const contactSchema = new SchemaMongoose({
     code: {
         type: Number
@@ -35,6 +37,7 @@ const contactSchema = new SchemaMongoose({
         type: Number
     }
 });
+
 const addressSchema = new SchemaMongoose({
     postalCode: {
         type: String
@@ -64,6 +67,7 @@ const addressSchema = new SchemaMongoose({
         type: String
     }
 });
+
 const userDataSchema = new SchemaMongoose({
     firstName: {
         type: String
@@ -91,6 +95,7 @@ const userDataSchema = new SchemaMongoose({
     docs: [documentSchema],
     cards: [cardSchema]
 });
+
 const userSchema = new SchemaMongoose({
     username: {
         type: String
