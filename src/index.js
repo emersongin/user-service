@@ -1,3 +1,4 @@
+require('dotenv').load();
 require('./config/core');
 
 const Server = require('./config/server');

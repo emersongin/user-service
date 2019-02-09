@@ -5,10 +5,6 @@ const middlewareHelmet = require('helmet');
 const middlewareBodyParser = require('body-parser');
 const CORS = require('./cors');
 
-const config = require('dotenv');
-//config.config({ path: 'C:/node/user-service/src/config/.env' });
-config.load();
-
 function connect(){
     //expressServer.use(middlewareHelmet());
 
