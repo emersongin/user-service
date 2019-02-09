@@ -5,6 +5,8 @@ const SchemaOptions = {
     timestamps: true
 };
 
+/*
+
 const cardSchema = new SchemaMongoose({
     cvv: {
         type: String
@@ -109,9 +111,7 @@ const userSchema = new SchemaMongoose({
     data: [userDataSchema]
 }, SchemaOptions);
 
-module.exports = mongooseModule.model('User', userSchema);
-
-/*
+*/
 
 const userSchema = new mongooseSchema({
     username: {
@@ -125,4 +125,6 @@ const userSchema = new mongooseSchema({
     }
 }, SchemaOptions);
 
-*/
+module.exports = mongooseModule.model('User', userSchema);
+
+

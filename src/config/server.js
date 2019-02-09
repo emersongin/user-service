@@ -4,7 +4,10 @@ const expressServer = expressModule();
 const middlewareHelmet = require('helmet');
 const middlewareBodyParser = require('body-parser');
 const CORS = require('./cors');
-const config = require('./.env');
+
+const config = require('dotenv');
+//config.config({ path: 'C:/node/user-service/src/config/.env' });
+config.load();
 
 function connect(){
     //expressServer.use(middlewareHelmet());
@@ -20,8 +23,8 @@ function connect(){
         extended: true 
     }));
 
-    expressServer.listen(config.SERVER_PORT, function(){
-        console.log(`SERVER is running in port: ${config.SERVER_PORT}`);
+    expressServer.listen(process.env.SERVER_PORT, function(){
+        console.log(`SERVER is running in port: ${process.env.SERVER_PORT}`);
     });
 
 }
