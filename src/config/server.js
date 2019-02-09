@@ -4,7 +4,7 @@ const expressServer = expressModule();
 const middlewareHelmet = require('helmet');
 const middlewareBodyParser = require('body-parser');
 const CORS = require('./cors');
-const serverPort = 3000;
+const config = require('./.env');
 
 function connect(){
     //expressServer.use(middlewareHelmet());
@@ -20,8 +20,8 @@ function connect(){
         extended: true 
     }));
 
-    expressServer.listen(serverPort, function(){
-        console.log(`SERVER is running in port: ${serverPort}`);
+    expressServer.listen(config.SERVER_PORT, function(){
+        console.log(`SERVER is running in port: ${config.SERVER_PORT}`);
     });
 
 }

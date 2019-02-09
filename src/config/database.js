@@ -1,11 +1,12 @@
 const mongooseModule = require('mongoose');
 const responseHand = require('../controller/response-hand');
+const config = require('./.env');
 
 class DataBaseConnect{
     constructor(){
-        this.databaseHostname = 'localhost';
-        this.databasePort = '27017';
-        this.databaseName = 'users';
+        this.databaseHostname = config.DB_HOSTNAME;
+        this.databasePort = config.DB_PORT;
+        this.databaseName = config.DB_NAME;
         this.databaseConnection = null;
     }
 
