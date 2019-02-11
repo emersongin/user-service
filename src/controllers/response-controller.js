@@ -1,5 +1,5 @@
 const mongoDB = require('../config/database');
-const modelUser = require('../model/user');
+const modelUser = require('../models/user');
 const responseHand = require('./response-hand');
 
 class ControllerResponse{

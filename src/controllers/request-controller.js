@@ -1,4 +1,4 @@
-const controllerResponse = require('./controller-response');
+const responseController = require('./response-controller');
 const requestHand = require('./request-hand');
 const responseHand = require('./response-hand');
 
@@ -21,7 +21,7 @@ class ControllerRequest{
             return responseHand.end(response, responseHand.notModified("Fresh resource."));
         }
 
-        controllerResponse.getUsers(filter, function(data){
+        responseController.getUsers(filter, function(data){
             responseHand.end(response, data);
         });
     }
@@ -35,7 +35,7 @@ class ControllerRequest{
             return responseHand.end(response, responseHand.notModified("Fresh resource."));
         }
 
-        controllerResponse.getUsers(filterUserID, function(data){
+        responseController.getUsers(filterUserID, function(data){
             responseHand.end(response, data);
         });
     }
@@ -51,7 +51,7 @@ class ControllerRequest{
             return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
         }
 
-        controllerResponse.createUsers(dataCreate, function(data){
+        responseController.createUsers(dataCreate, function(data){
             responseHand.end(response, data);
         });
     }
@@ -76,7 +76,7 @@ class ControllerRequest{
             return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
         }
         
-        controllerResponse.updateUsers(filterUserID, dataReplace, optionsReplace, function(data){
+        responseController.updateUsers(filterUserID, dataReplace, optionsReplace, function(data){
             responseHand.end(response, data);
         });
     }
@@ -99,7 +99,7 @@ class ControllerRequest{
             return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
         }
         
-        controllerResponse.updateUsers(filterParams, dataUpdate, optionsUpdateMultiple, function(data){
+        responseController.updateUsers(filterParams, dataUpdate, optionsUpdateMultiple, function(data){
             responseHand.end(response, data);
         });
     }
@@ -124,7 +124,7 @@ class ControllerRequest{
             return responseHand.end(response, responseHand.unsupportedMediaType("Use Content-type: " + requestHand.contentTypes + "."));
         }
         
-        controllerResponse.updateUsers(filterUserID, dataUpdate, optionsUpdate, function(data){
+        responseController.updateUsers(filterUserID, dataUpdate, optionsUpdate, function(data){
             responseHand.end(response, data);
         });
     }
@@ -132,7 +132,7 @@ class ControllerRequest{
     deleteUsers(request, response, next){
         let filter = request.body || {};
     
-        controllerResponse.deleteUsers(filter, function(data){
+        responseController.deleteUsers(filter, function(data){
             responseHand.end(response, data);
         });
     }
@@ -142,7 +142,7 @@ class ControllerRequest{
             _id: request.params._id || ''
         };
     
-        controllerResponse.deleteUsers(filterUserID, function(data){
+        responseController.deleteUsers(filterUserID, function(data){
             responseHand.end(response, data);
         });''
     }

@@ -1,5 +1,5 @@
 const mongooseModule = require('mongoose');
-const responseHand = require('../controller/response-hand');
+const responseHand = require('../controllers/response-hand');
 
 class DataBaseConnect{
     constructor(){
