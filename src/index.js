@@ -7,10 +7,7 @@ const userAPI = require('./api/user-api');
 function startService(){
     Server.connect().then(expressServer =>{
         userAPI(expressServer);
-    }).catch(error => {
-        console.log(error);
     });
-    
 }
 
 startService();

@@ -24,21 +24,12 @@ class ServerConnection{
                 extended: true 
             }));
             
-            expressServer.listen(this.serverPort, function serverHTTP(){
+            expressServer.listen(this.serverPort, function connectServerHTTP(){
                 console.log(`SERVER is running in port: ${this._connectionKey}`);
                 resolve(expressServer);
             });
-
-            reject(`SERVER connect error in port: ${process.env.SERVER_PORT}`);
-        });
-    }
-    
-    disconnect(){
-        return Promise((resolve, reject) => {
-
         });
     }
 }
-
 
 module.exports = new ServerConnection();
