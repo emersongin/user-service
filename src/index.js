@@ -5,8 +5,12 @@ const Server = require('./config/server');
 const userAPI = require('./api/user-api');
 
 function startService(){
-    Server.connect();
-    userAPI(Server.expressServer);
+    Server.connect().then(expressServer =>{
+        userAPI(expressServer);
+    }).catch(error => {
+        console.log(error);
+    });
+    
 }
 
 startService();

@@ -1,7 +1,7 @@
 const mongooseModule = require('mongoose');
 const responseHand = require('../controllers/response-hand');
 
-class DataBaseConnect{
+class DataBaseConnection{
     constructor(){
         this.databaseHostname = process.env.DB_HOSTNAME;
         this.databasePort = process.env.DB_PORT;
@@ -58,4 +58,4 @@ class DataBaseConnect{
 
 }
 
-module.exports = new DataBaseConnect();
+module.exports = new DataBaseConnection();
