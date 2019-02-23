@@ -1,4 +1,3 @@
-require('dotenv').load();
 const test = require('tape');
 const connectionDatabase = require('./database');
 
@@ -24,4 +23,4 @@ function runTests(){
     })
 }
 
-runTests();
+module.exports = runTests;
