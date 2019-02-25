@@ -24,7 +24,7 @@ class ServerConnection{
                 extended: true 
             }));
             
-            expressServer.listen(this.serverPort, function connectServerHTTP(){
+            expressServer.listen(this.serverPort, function createServerHTTP(){
                 console.log(`SERVER is running in port: ${this._connectionKey}`);
                 resolve(expressServer);
             });
