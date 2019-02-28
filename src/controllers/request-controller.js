@@ -12,7 +12,7 @@ requestHand.rules({
     ]
 });
 
-class ControllerRequest{
+class RequestController{
 
     getUsers(request, response, next){
         let filter = request.body || {};
@@ -194,4 +194,4 @@ class ControllerRequest{
 
 }
 
-module.exports = new ControllerRequest();
+module.exports = new RequestController();

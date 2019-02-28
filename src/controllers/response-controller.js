@@ -2,7 +2,7 @@ const mongoDB = require('../config/database');
 const modelUser = require('../models/user');
 const responseHand = require('./response-hand');
 
-class ControllerResponse{
+class ResponseController{
 
     async getUsers(filter, callback){   
         try{
@@ -186,4 +186,4 @@ class ControllerResponse{
 }
 
 
-module.exports = new ControllerResponse();
+module.exports = new ResponseController();
