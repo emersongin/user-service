@@ -1,3 +1,3 @@
 require('dotenv').load();
 
-require('./config/database.test')();
+require('./config/database.test');

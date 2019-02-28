@@ -1,35 +1,38 @@
 const expressModule = require('express');
-const expressServer = expressModule();
 
+const CORS = require('./cors');
 const middlewareHelmet = require('helmet');
 const middlewareBodyParser = require('body-parser');
-const CORS = require('./cors');
 
-class ServerConnection{
+const userAPI = require('../api/user-api');
+
+class ServerController{
     constructor(){
-        this.serverPort = process.env.SERVER_PORT;
+        this.express = expressModule();
+        this.port = process.env.SERVER_PORT;
+
+        this.useMiddleware(this.express);
+        this.useRoutes(this.express);
     }
 
-    connect(){
-        return new Promise((resolve, reject) =>{
-   
-            expressServer.use(CORS);
-    
-            expressServer.use(middlewareBodyParser.json({
-                type: 'json'
-            }));
-    
-            expressServer.use(middlewareBodyParser.urlencoded({
-                type: 'urlencoded', 
-                extended: true 
-            }));
-            
-            expressServer.listen(this.serverPort, function createServerHTTP(){
-                console.log(`SERVER is running in port: ${this._connectionKey}`);
-                resolve(expressServer);
-            });
-        });
+    useMiddleware(express){
+        express.use(CORS);
+        
+        //express.use(middlewareHelmet);
+
+        express.use(middlewareBodyParser.json({
+            type: 'json'
+        }));
+
+        express.use(middlewareBodyParser.urlencoded({
+            type: 'urlencoded', 
+            extended: true 
+        }));
+    }
+
+    useRoutes(express){
+        userAPI(express);
     }
 }
 
-module.exports = new ServerConnection();
+module.exports = new ServerController();

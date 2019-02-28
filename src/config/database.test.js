@@ -23,4 +23,4 @@ function runTests(){
     })
 }
 
-module.exports = runTests;
+module.exports = runTests();

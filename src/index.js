@@ -1,12 +1,11 @@
 require('dotenv').load();
 require('./config/core');
 
-const Server = require('./config/server');
-const userAPI = require('./api/user-api');
+const server = require('./config/server');
 
 function startService(){
-    Server.connect().then(expressServer =>{
-        userAPI(expressServer);
+    server.express.listen(server.port, function createServerHTTP(){
+        console.log(`SERVER is running in port: ${this._connectionKey}`);
     });
 }
 
