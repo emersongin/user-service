@@ -2,7 +2,6 @@ const expressModule = require('express');
 
 const CORS = require('./cors');
 const middlewareHelmet = require('helmet');
-const middlewareBodyParser = require('body-parser');
 
 const userAPI = require('../api/user-api');
 
@@ -19,12 +18,12 @@ class ServerController{
         express.use(CORS);
         
         //express.use(middlewareHelmet);
-
-        express.use(middlewareBodyParser.json({
+        
+        express.use(expressModule.json({
             type: 'json'
         }));
 
-        express.use(middlewareBodyParser.urlencoded({
+        express.use(expressModule.urlencoded({
             type: 'urlencoded', 
             extended: true 
         }));

@@ -6,13 +6,13 @@
   "scripts": {
     "start": "node ./src/index.js",
     "dev": "nodemon",
-    "test": "node ./src/index.test.js"
+    "test": "node ./src/index.test.js",
+    "postinstall": "npm prune"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "helmet": "^3.15.0",
