@@ -7,52 +7,61 @@ class DataBaseConnection{
         this.databasePort = process.env.DB_PORT;
         this.databaseName = process.env.DB_NAME;
         this.databaseConnection = null;
+
+        mongooseModule.connection.on('connected', () =>{
+            console.log(`DATABASE: ${this.databaseName}, connected on port: ${this.databasePort}`);
+        });
+
+        mongooseModule.connection.on('disconnected', () =>{
+            console.log(`DATABASE: ${this.databaseName}, is disconnected!`);
+        });
+
     }
 
     connect(){
         let connection = `mongodb://${this.databaseHostname}:${this.databasePort}/${this.databaseName}`;
 
         let connectOptions = {
+            reconnectTries: Number.MAX_VALUE,
+            reconnectInterval: 500,
+            poolSize: 5,
             useNewUrlParser: true
         };
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if(this.databaseConnection){
-                resolve(this.databaseConnection);
+                return resolve(this.databaseConnection);
             }
 
-            mongooseModule.connect(connection, connectOptions).then(connectionMongoDB => {
-                    this.databaseConnection = connectionMongoDB;
-                    resolve(this.databaseConnection);
+            try{
+                this.databaseConnection = await mongooseModule.connect(connection, connectOptions);
+                resolve(true);
 
-                    console.log(`DATABASE: ${this.databaseName}, connected on port: ${this.databasePort}`);
-                }).catch(error => {
-                    reject({
-                        body: error,
-                        status: responseHand.statusCodes.serverError.internalServerError
-                    });
-
-                    console.log(`Connection error in DATABASE: ${this.databaseName} on port: ${this.databasePort}`);
+            }catch(error){
+                reject({
+                    body: error,
+                    status: responseHand.statusCodes.serverError.internalServerError
                 });
+
+            }
         });
     }
 
     disconnect(){
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if(!this.databaseConnection){
-                console.log(`DATABASE: ${this.databaseName}, connection not found!`);
                 return resolve(true);
             }
 
-            mongooseModule.connection.close().then(disconnectionMongoDB => {
-                    this.databaseConnection = null;
-                    resolve(true);
-  
-                    console.log(`DATABASE: ${this.databaseName}, is disconnected!`);
-                }).catch(error => {
-                    reject(error);
+            try{
+                await mongooseModule.connection.close();
+                this.databaseConnection = null;
+                resolve(true);
+                
+            }catch(error){
+                reject(error);
 
-                });
+            }
         });
     }
 

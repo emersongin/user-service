@@ -6,14 +6,14 @@ class ResponseController{
 
     async getUsers(filter, callback){   
         try{
-            const databaseConnection = await this.connect();
+            await mongoDB.connect();
             const usersFound = await getUsersDatabase();
 
             callback(usersFound);
         }catch(error){
             callback(error);
         }finally{
-            await this.disconnect();
+            await mongoDB.disconnect();
         }
 
         function getUsersDatabase(){
@@ -35,7 +35,7 @@ class ResponseController{
     
     async createUsers(dataCreate, callback){
         try{
-            const databaseConnection = await this.connect();
+            await mongoDB.connect();
             const usernames = await checkUsernames();
             const usersCreated = await createUsersDatabase();
 
@@ -43,7 +43,7 @@ class ResponseController{
         }catch(error){
             callback(error);
         }finally{
-            await this.disconnect();
+            await mongoDB.disconnect();
         }
 
         function checkUsernames(){
@@ -103,14 +103,14 @@ class ResponseController{
     
     async updateUsers(filter, dataUpdate, optios, callback){
         try{
-            const databaseConnection = await this.connect();
+            await mongoDB.connect();
             const usersUpdated = await updateUsersDatabase();
 
             callback(usersUpdated);
         }catch(error){
             callback(error);
         }finally{
-            await this.disconnect();
+            await mongoDB.disconnect();
         }
 
         function updateUsersDatabase(){
@@ -132,14 +132,14 @@ class ResponseController{
     
     async deleteUsers(filter, callback){
         try{
-            const databaseConnection = await this.connect();
+            await mongoDB.connect();
             const usersDeleted = await deleteUsersDatabase();
 
             callback(usersDeleted);
         }catch(error){
             callback(error);
         }finally{
-            await this.disconnect();
+            await mongoDB.disconnect();
         }
 
         function deleteUsersDatabase(){
@@ -158,32 +158,7 @@ class ResponseController{
             });
         }
     }
-    
-    connect(){
-        return new Promise((resolve, reject) => {
-            mongoDB.connect().then(databaseConnection => {
-                resolve(databaseConnection);
-
-            }).catch(error => {
-                reject(error);
-
-            });
-        });
-    }
-
-    disconnect(){
-        return new Promise((resolve, reject) => {
-            mongoDB.disconnect().then(dataBaseClose => {
-                resolve(dataBaseClose);
-
-            }).catch(error => {
-                reject(error);
-
-            });
-        });
-    }
 
 }
-
 
 module.exports = new ResponseController();
