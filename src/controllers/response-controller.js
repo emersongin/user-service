@@ -24,7 +24,7 @@ class ResponseController{
                     if(queryData.empty()){
                         return reject(responseHand.notFound("Check the request parameter; :id."));
                     }else{
-                        return resolve(responseHand.ok(queryData.map(responseHand.createLinksGet)));
+                        return resolve(responseHand.ok(queryData.map(responseHand.createLinks)));
                     }
                 }catch(error){
                     return reject(responseHand.badRequest(error));

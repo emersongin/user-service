@@ -121,10 +121,9 @@ const userSchema = new mongooseSchema({
     },
     password: {
         type: String,
+        select: false,
         required: [true, "Password is required!"]
     }
 }, SchemaOptions);
 
 module.exports = mongooseModule.model('User', userSchema);
-
-

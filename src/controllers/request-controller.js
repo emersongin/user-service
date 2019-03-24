@@ -21,7 +21,7 @@ class RequestController{
             return responseHand.end(response, responseHand.notModified("Fresh resource."));
         }
 
-        responseController.getUsers(filter, function(data){
+        responseController.getUsers(filter, function(data){      
             responseHand.end(response, data);
         });
     }

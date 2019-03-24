@@ -199,24 +199,27 @@ class ResponseHand{
         };
     }
 
-    createLinksGet(object, index, array){
-        let links = [];
-        
-        links.push({
-            type: "DELETE",
-            rel: "remove",
-            href: "http://localhost:3000/api/v0/users/" + object._id
-        }, {
-            type: "PUT",
-            rel: "replace",
-            href: "http://localhost:3000/api/v0/users/" + object._id
-        }, {
-            type: "PATCH",
-            rel: "update",
-            href: "http://localhost:3000/api/v0/users/" + object._id
-        });
+    createLinks(object, index, array){
+        let links = {
+            get: {
+                rel: 'GET',
+                href: "http://localhost:3000/api/v0/users/" + object._id
+            },
+            put: {
+                rel: 'PUT',
+                href: "http://localhost:3000/api/v0/users/" + object._id
+            },
+            patch: {
+                rel: 'PATCH',
+                href: "http://localhost:3000/api/v0/users/" + object._id
+            },
+            delete: {
+                rel: 'DELETE',
+                href: "http://localhost:3000/api/v0/users/" + object._id
+            }
+        };
 
-        return Object.assign({}, object._doc, {links});
+        return Object.assign(object._doc, {links});
     }
 }
 
