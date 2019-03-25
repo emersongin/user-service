@@ -151,45 +151,73 @@ class RequestController{
         responseHand.end(response, {
             body: {
                 get: {
-                    params: {
-                        _id: '_id, user database'
+                    getOne: {
+                        cache: true,
+                        params: "ID User",
+                        body: false
+                    },
+                    getMany: {
+                        cache: true,
+                        params: false,
+                        body: "Object {atributes for filter}",
+                        warning: "Obect for filter null, get alls"
                     }
                 },
                 post: {
-                    body: {
-                        username: {
-                            type: 'String',
-                        },
-                        password: {
-                            type: 'String',
-                        }
+                    createOne: {
+                        accepts: "JSON",
+                        contentTypes: "URL-encoded and JSON",
+                        params: false,
+                        body: "Object {alls atributes for create}"
+                    },
+                    createMany: {
+                        accepts: "JSON",
+                        contentTypes: "URL-encoded and JSON",
+                        params: false,
+                        body: "Array[Object, Object]"
                     }
                 },
                 put: {
-                    params: {
-                        _id: '_id, user database'
+                    replaceOne: {
+                        accepts: "JSON",
+                        contentTypes: "URL-encoded and JSON",
+                        params: "ID User",
+                        body: "Object {alls atributes for replace}"
+                    }
+                },
+                patch: {
+                    updateOne: {
+                        accepts: "JSON",
+                        contentTypes: "URL-encoded and JSON",
+                        params: "ID User",
+                        body: "Object {atributes for updates}"
                     },
-                    body: {
-                        username: {
-                            type: 'String',
-                        },
-                        password: {
-                            type: 'String',
-                        }
+                    updateMany: {
+                        accepts: "JSON",
+                        contentTypes: "URL-encoded and JSON",
+                        params: false,
+                        body: "Object {filter:{atributes for filter}, data:{atributes for updates}}",
+                        warning: "Object for filter null, update alls"
                     }
                 },
                 delete: {
-                    params: {
-                        _id: '_id, user databese'
+                    deleteOne: {
+                        params: "ID User",
+                        body: false
+                    },
+                    deleteMany: {
+                        params: false,
+                        body: "Object {atributes for filter}",
+                        warning: "Object for filter null, delete alls"
                     }
-                } 
+                }
             },
             status: responseHand.statusCodes.success.ok
         })
     }
 
     methodNotAllowed(request, response, next){
-        return responseHand.end(response, responseHand.methodNotAllowed("Use the OPTIONS verb for methods options."));
+        return responseHand.end(response, responseHand.methodNotAllowed(request.method, "Use the OPTIONS verb for methods options."));
     }
 
 }

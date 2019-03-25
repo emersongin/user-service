@@ -80,7 +80,7 @@ class ResponseController{
                 try{
                     const createdUsers = await modelUser.insertMany(dataCreate);
 
-                    return resolve(responseHand.created(createdUsers));
+                    return resolve(responseHand.created(createdUsers.map(responseHand.createLinks)));
                 }catch(error){
                     return reject(errorResponse(error));
                 }

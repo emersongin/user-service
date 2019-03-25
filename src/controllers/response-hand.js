@@ -155,11 +155,11 @@ class ResponseHand{
         };
     }
 
-    methodNotAllowed(message){
+    methodNotAllowed(method, message){
         return {
             body: {
                 name: "Method not allowed",
-                description: `Method ${request.method} received in the request-line is known by the origin server but not supported by the target resource.`,
+                description: `Method ${method} received in the request-line is known by the origin server but not supported by the target resource.`,
                 message
             },
             status: this.statusCodes.clientError.methodNotAllowed
