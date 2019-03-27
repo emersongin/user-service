@@ -2,6 +2,9 @@ const responseController = require('./response-controller');
 const requestHand = require('./request-hand');
 const responseHand = require('./response-hand');
 
+const jsonWebToken = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
 requestHand.rules({
     accepts: [
         requestHand.headers.contentType.json
@@ -220,6 +223,17 @@ class RequestController{
         return responseHand.end(response, responseHand.methodNotAllowed(request.method, "Use the OPTIONS verb for methods options."));
     }
 
+    authenticateToken(request, response, next){
+        let apiKey = request.body;
+
+        if(apiKey && bcrypt.compareSync(apiKey.key, '$2b$10$p08AUj216IA9pFCk2ajzLehPaEnF5vMzRr7JyWvLJrmGoJSQUD16O')){
+            const tokenValid = jsonWebToken.sign(apiKey.id, process.env.AUTH_SECRET);
+
+            responseHand.end(response, responseHand.ok(tokenValid));
+        }else{
+            responseHand.end(response, responseHand.badRequest('Failed to authenticate token!'));
+        }
+    }
 }
 
 module.exports = new RequestController();
