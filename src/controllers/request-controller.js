@@ -229,9 +229,9 @@ class RequestController{
         if(apiKey && bcrypt.compareSync(apiKey.key, '$2b$10$p08AUj216IA9pFCk2ajzLehPaEnF5vMzRr7JyWvLJrmGoJSQUD16O')){
             const tokenValid = jsonWebToken.sign(apiKey.id, process.env.AUTH_SECRET);
 
-            responseHand.end(response, responseHand.ok(tokenValid));
+            responseHand.end(response, responseHand.ok({ tokenValid }));
         }else{
-            responseHand.end(response, responseHand.badRequest('Failed to authenticate token!'));
+            responseHand.end(response, responseHand.badRequest('token', 'Failed to authenticate.'));
         }
     }
 }

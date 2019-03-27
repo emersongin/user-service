@@ -9,7 +9,7 @@ module.exports = (request, response, next) => {
     }
 
     if(!tokenValidate){
-        return responseHand.end(response, responseHand.forbidden('Token no provided!'));
+        return responseHand.end(response, responseHand.forbidden('token', 'No provided.'));
     }
 
     async function verifyToken(){
@@ -18,7 +18,7 @@ module.exports = (request, response, next) => {
 
             next();
         }catch(error){
-            return responseHand.end(response, responseHand.forbidden('Failed to authenticate token!'));
+            return responseHand.end(response, responseHand.forbidden('token', 'Failed to authenticate.'));
         }
     }
     

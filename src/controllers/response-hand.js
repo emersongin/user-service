@@ -109,14 +109,20 @@ class ResponseHand{
 
     badRequest(error, message){
         return {
-            body: error,
+            body: {
+                error,
+                message
+            },
             status: this.statusCodes.clientError.badRequest
         };
     }
 
     forbidden(error, message){
         return {
-            body: error,
+            body: {
+                error,
+                message
+            },
             status: this.statusCodes.clientError.forbidden
         };
     }
