@@ -1,7 +1,7 @@
 {
   "name": "src",
   "version": "1.0.0",
-  "description": "",
+  "description": "Micro serviço de usuários",
   "main": "./src/index.js",
   "scripts": {
     "start": "node ./src/index.js",
