@@ -1,4 +1,4 @@
-# user-service
-# Projeto Micro Serviços
+# USER SERVICE
+# Micro Service Project
 
-Projeto de criação para estudo de Web API.
+Projeto de criação para estudo de Web API em micro serviços.
